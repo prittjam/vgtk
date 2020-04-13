@@ -1,10 +1,13 @@
-function v = distort_kb(u, k)
+function v = distort_kb(u, k, A)
     if any(k) > 0
         m = size(u,1);
         if (m == 2)
-            u = [u;ones(1,size(u,2))];
+            v = PT.homogenize(u);
+        else
+            v = u;
         end
-
+        
+        v = A \ v;
         r = vecnorm(v(1:2,:),2,1);
         theta = atan(r);
         theta2 = theta.^2;
@@ -18,7 +21,8 @@ function v = distort_kb(u, k)
         cdist(ind) = theta_d(ind) .* inv_r(ind);
 
         v = [v(1:2,:) .* cdist; ones(1,size(v,2))];
-
+        v = A * v;
+        
         if (m == 2)
             v = v(1:2,:);
         end

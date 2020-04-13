@@ -1,4 +1,3 @@
 function x = normalize(x, A)
-    m = size(x, 1);
-    x = reshape(A * reshape(x, 3, []), m, []);
+    x = PT.normalize(x, A, 3);
 end

@@ -1,4 +1,3 @@
-function xu = undistort_div(xd, q)
-    m = size(xd, 1);
-    xu = reshape(CAM.undistort_div(reshape(xd, 3, []), q), m, []);
+function xu = undistort_div(xd, K, q)
+    xu = PT.undistort_div(xd, K, q, 3);
 end

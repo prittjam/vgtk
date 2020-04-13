@@ -1,2 +1,3 @@
 function xp = renormI(x)
-xp = PT.renormI(x,4);
+    xp = PT.renormI(x,4);
+end

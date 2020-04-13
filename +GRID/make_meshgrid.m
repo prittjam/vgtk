@@ -13,7 +13,7 @@ function x = make_meshgrid(wplane, hplane, gt, varargin)
     if ~isempty(gt)
         gt.A = inv(CAM.make_fitz_normalization(gt.cc));
         gt.q_norm = CAM.normalize_div(gt.q, gt.A);
-        x = CAM.distort_div(PT.renormI(gt.P * X), gt.q_norm, gt.A);
+        x = CAM.distort_div(PT.renormI(gt.P * X), gt.A, gt.q_norm);
     else
         x = X;
     end

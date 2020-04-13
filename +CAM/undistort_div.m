@@ -1,4 +1,4 @@
-function v = undistort_div(u, q, A)
+function v = undistort_div(u, K, q)
     if abs(q) > 0
         m = size(u,1);
         if (m == 2)
@@ -6,12 +6,12 @@ function v = undistort_div(u, q, A)
         else
             v = u;
         end
-        
-        v = A \ v;
+        v = K \ v;
+
         dv = 1+q*(v(1,:).^2+v(2,:).^2);
         v(1:2,:)  = bsxfun(@rdivide,v(1:2,:),dv); 
-        v = A * v;
         
+        v = K * v;
         if (m == 2)
             v = v(1:2,:);
         end

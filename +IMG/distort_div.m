@@ -1,7 +1,7 @@
-function [timg,trect,T,S] = distort_div(img, q, varargin)
+function [timg,trect,T,S] = distort_div(img, K, q, varargin)
     cfg = struct('border', [], 'size', size(img));
     cfg = cmp_argparse(cfg,varargin{:});
-    T0 = make_distort_div_xform(q);
+    T0 = make_distort_div_xform(K, q);
 
     nx = size(img,2);
     ny = size(img,1);
@@ -35,17 +35,17 @@ function [timg,trect,T,S] = distort_div(img, q, varargin)
 end
 
 
-function T = make_distort_div_xform(q)
+function T = make_distort_div_xform(K, q)
     T = maketform('custom', 2, 2, ...
                 @distort_div_xform, ...
                 @undistort_div_xform, ...
-                struct('q',q));
+                struct('K', K, 'q', q));
 end
 
 function v = undistort_div_xform(u, T)
-    v = CAM.undistort_div(u', T.tdata.q)';
+    v = CAM.undistort_div(u', T.tdata.K, T.tdata.q)';
 end
 
 function v = distort_div_xform(u, T)
-    v = CAM.distort_div(u', T.tdata.q)';
+    v = CAM.distort_div(u', T.tdata.K, T.tdata.q)';
 end

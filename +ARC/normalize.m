@@ -1,3 +1,3 @@
-function A = normalize(arcs, A)
-    arcs = cellfun(@(x) A * x, arcs, 'UniformOutput', false);
+function arcs = normalize(arcs, K)
+    arcs = cellfun(@(x) K \ x, arcs, 'UniformOutput', false);
 end

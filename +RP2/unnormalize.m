@@ -1,3 +1,3 @@
-function x = unnormalize(x, A)
-    x = PT.unnormalize(x, A, 3);
+function x = unnormalize(x, K)
+    x = PT.unnormalize(x, K, 3);
 end

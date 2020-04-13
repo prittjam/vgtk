@@ -13,7 +13,7 @@ function L = ru_div_line(l,cc,q,p,varargin)
         assert(all(abs(vecnorm(n,2,1)-1) < 1e-13))
         l = [p(1:2,:); n];
     end
-    if cc ~= [0 0]
+    if cc ~= [0; 0]
         A = make_A(cc, varargin{:})
         l0 = A * PT.homogenize(l(1:2,:));
         l = [l0(1:2,:); l(3:4,:)];
@@ -31,7 +31,7 @@ function L = ru_div_line(l,cc,q,p,varargin)
     Lz = - nx .* px - ny .* py;
     L = [Lx; Ly; Lz];
 
-    if cc ~= [0 0]
+    if cc ~= [0; 0]
         L = A' * L;
     end
 end

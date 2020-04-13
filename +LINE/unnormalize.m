@@ -1,3 +1,6 @@
-function l = normalize(l, A)
-    l = A' * l;
+function l = unnormalize(l, K)
+    % l -- line in the normalized coordinates
+    % K -- camera matrix
+
+    l = K' \ l;
 end

@@ -3,8 +3,8 @@ function [c, s, arcs, l, su] = image_planar_lines(L, S, gt)
 
     l = gt.P' \ L;
     su = PT.renormI(gt.P * S);
-    c = CAM.rd_div_line(l, gt.cc, gt.q);
-    s = CAM.rd_div(su, gt.cc, gt.q);
+    c = LINE.distort_div(l, gt.A, gt.q_norm);
+    s = CAM.distort_div(su, gt.A, gt.q_norm);
     arcs = ARC.sample(c, reshape(s(1:2,:),4,[]), 'num_pts', 110);
     chords = PT.renormI(cross(s(:,1:2:end), s(:,2:2:end)));
     n = chords(1:2,:);

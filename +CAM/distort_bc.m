@@ -1,5 +1,7 @@
-function v = distort_bc(u, K, dist_coeffs)
-    if any(abs(dist_coeffs)) > 0
+function v = distort_bc(u, K, dist_params)
+    % dist_params -- [k1 k2 p1 p2 k3 k4 k5 ...]
+
+    if any(abs(dist_params)) > 0
         m = size(u,1);
         if (m == 2)
             v = PT.homogenize(u);
@@ -8,8 +10,8 @@ function v = distort_bc(u, K, dist_coeffs)
         end        
         v = K \ v;
 
-        k = dist_coeffs([1:2, 5:end]);
-        p = dist_coeffs(3:4);
+        k = dist_params([1:2, 5:end]);
+        p = dist_params(3:4);
         r2 = sum(v(1:2,:).^2,1);
         pows = (1:numel(k)) .* (k~=0);
         kv = (1 + (r2'.^(pows)) * k')';

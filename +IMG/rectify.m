@@ -16,12 +16,12 @@ function [timg,trect,T,A] = rectify(img,H,varargin)
     cfg.cspond = [];
     cfg.registration = 'Similarity';
     cfg.ru_xform = maketform('affine',eye(3));
-    cfg.fill = [255 255 255]';
+    cfg.fill = 255;
     cfg.scale_output = 1;
     
     [cfg,leftover] = cmp_argparse(cfg,varargin{:});
     
-    leftover = { 'Fill', cfg.fill, ...
+    leftover = { 'FillValues', cfg.fill, ...
                  leftover{:} };
     
     if isempty(cfg.ru_xform)

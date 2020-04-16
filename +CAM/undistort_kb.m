@@ -1,5 +1,7 @@
-function v = undistort_kb(u, K, dist_coeffs)
-    if any(abs(dist_coeffs)) > 0
+function v = undistort_kb(u, K, dist_params)
+    % dist_params -- [k1 k2 p1 p2 k3 k4 k5 ...]
+    
+    if any(abs(dist_params)) > 0
         m = size(u,1);
         if (m == 2)
             v = PT.homogenize(u);
@@ -17,10 +19,10 @@ function v = undistort_kb(u, K, dist_coeffs)
             ind = find(continue_flag);
             theta_ = theta(ind);
             theta_d_ = theta_d(ind);
-            k0_theta2 = dist_coeffs(1) .* theta_.^2;
-            k1_theta4 = dist_coeffs(2) .* theta_.^4;
-            k2_theta6 = dist_coeffs(3) .* theta_.^6;
-            k3_theta8 = dist_coeffs(4) .* theta_.^8;
+            k0_theta2 = dist_params(1) .* theta_.^2;
+            k1_theta4 = dist_params(2) .* theta_.^4;
+            k2_theta6 = dist_params(3) .* theta_.^6;
+            k3_theta8 = dist_params(4) .* theta_.^8;
             theta_fix(ind) = (theta_ .* (1 + k0_theta2 +...
                                     k1_theta4 + k2_theta6 +...
                                     k3_theta8) - theta_d_) ./...

@@ -1,4 +1,7 @@
-function v = distort_div(u, K, q)
+function v = distort_div(u, K, dist_params)
+    % dist_params -- q
+
+    q = dist_params(1);
     if abs(q) > 0
         m = size(u,1);
         if (m == 2)

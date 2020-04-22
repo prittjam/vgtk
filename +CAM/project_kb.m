@@ -1,5 +1,5 @@
-function v = distort_kb(u, K, dist_params)
-    % dist_params -- [a1 a2 a3 a4 ...]
+function v = project_kb(u, K, dist_params)
+    % dist_params -- [k1 k2 k3 k4]
 
     if any(abs(dist_params)) > 0
         m = size(u,1);

@@ -32,3 +32,6 @@
 *.app
 
 .DS_Store
+.ipynb_checkpoints
+*.ipynb
+*.py

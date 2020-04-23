@@ -35,11 +35,21 @@ for k=1:k_up
     yc = [yc yc(ind)+k];
     xc = [xc xc(ind)];
 end
+for k=1:k_up
+    ind = find(xc+k<size(img,2));
+    xc = [xc xc(ind)+k];
+    yc = [yc yc(ind)];
+end
 k_down = k_up - mod(linewidth-1,2);
 for k=1:k_down
     ind = find(yc-k>0);
     yc = [yc yc(ind)-k];
     xc = [xc xc(ind)];
+end
+for k=1:k_down
+    ind = find(xc-k>0);
+    xc = [xc xc(ind)-k];
+    yc = [yc yc(ind)];
 end
 % k_up = round((linewidth-1)/2);
 % for k=1:k_up

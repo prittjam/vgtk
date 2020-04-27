@@ -7,5 +7,9 @@ function [xd, x] = image_planar_pts(X, cam)
     %   xd -- image points in RP2
 
     x = RP2.renormI(RP2.multiprod(cam.P, X));
-    xd = RP2.distort_div(x, cam.A, cam.q_norm);
+    if ~isfield(cam, 'dist_model')
+        cam.dist_model = 'div';
+    end
+    distort_fun = str2func(['RP2.distort_' cam.dist_model]);
+    xd = distort_fun(x, cam.A, cam.q_norm);
 end

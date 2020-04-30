@@ -9,7 +9,7 @@ function [HFOV, VFOV, DFOV] = calc_FOV(nx, ny, K,...
     HFOV = sum(theta) * 180 / pi;
 
     % VFOV
-    x = [K(1,3) 1 1; K(2,3) ny 1]';
+    x = [K(1,3) 1 1; K(1,3) ny 1]';
     x_norm = K \ x;
     rs = vecnorm(x_norm(1:2,:),2,1);
     [~, theta] = rad_backproj_fn(rs, rad_backproj_params);

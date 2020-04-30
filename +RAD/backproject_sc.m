@@ -5,6 +5,6 @@ function [ru, theta] = backproject_sc(rd, a)
     w = (a0 + (rd'.^(pows)) * a')';
     ru = ones(size(rd)) * NaN;
     ind = find(w > 1e-8);
-    ru(ind) = rd ./ w;
+    ru(ind) = rd(ind) ./ w(ind);
     theta = atan2(rd,w);
 end

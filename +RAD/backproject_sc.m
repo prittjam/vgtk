@@ -1,6 +1,6 @@
-function [ru, theta] = backproject_sc(rd, a)
-    a0 = a(1);
-    a = a(2:end);
+function [ru, theta] = backproject_sc(rd, proj_params)
+    a0 = proj_params(1);
+    a = proj_params(2:end);
     pows = (2:numel(a)+1) .* (a~=0);
     w = (a0 + (rd'.^(pows)) * a')';
     ru = ones(size(rd)) * NaN;

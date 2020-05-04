@@ -1,4 +1,5 @@
-function rd = project_kb(ru, theta, k)
+function rd = project_kb(ru, theta, proj_params)
+    k = proj_params;
     if isempty(theta)
         theta = atan(ru);
     end

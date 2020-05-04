@@ -1,4 +1,5 @@
-function [ru, theta] = backproject_kb(rd, k)
+function [ru, theta] = backproject_kb(rd, proj_params)
+    k = proj_params;
     ru = ones(size(rd)) * NaN;
     for p=1:numel(rd)
         rts = roots([k(4) 0 k(3) 0 k(2) 0 k(1) 0 1 -rd(p)]);

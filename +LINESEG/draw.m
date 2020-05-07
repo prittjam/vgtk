@@ -1,5 +1,6 @@
 function h1 = draw(ax1, s, varargin)
     s = reshape(s, 6, []);
+    s = RP2.renormI(s);
     x = s(1:3:end,:);
     y = s(2:3:end,:);
     

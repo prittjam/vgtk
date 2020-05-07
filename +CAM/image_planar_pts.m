@@ -1,4 +1,4 @@
-function [xd, x] = image_planar_pts(X, cam)
+function [xd, x, xd_norm] = image_planar_pts(X, cam)
     % Images coplanar points with division model of radial distortion 
     % Args:
     %   X -- planar points in RP2
@@ -6,10 +6,15 @@ function [xd, x] = image_planar_pts(X, cam)
     % Returns:
     %   xd -- image points in RP2
 
-    x = RP2.renormI(RP2.multiprod(cam.P, X));
-    if ~isfield(cam, 'dist_model')
-        cam.dist_model = 'div';
+    if ~isfield(cam, 'proj_model')
+        x = RP2.renormI(RP2.multiprod(cam.P, X));
+        xd = RP2.distort_div(x, cam.K, cam.q_norm);
+        xd_norm = RP2.normalize(xd, cam.K);
+    else
+        project_x = str2func(['RP2.' cam.proj_fn]);
+        x = RP2.mtimesx(cam.P, X);
+        xd = project_x(x, cam.K, cam.proj_params);
+        xd_norm = RP2.normalize(xd, cam.K);
+        x = RP2.renormI(x);
     end
-    distort_fun = str2func(['RP2.distort_' cam.dist_model]);
-    xd = distort_fun(x, cam.A, cam.q_norm);
 end

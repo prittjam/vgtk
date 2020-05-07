@@ -1,6 +1,6 @@
 function [cam, x] = make_viewpoint(cam,varargin)
     cfg = struct('w', 10, 'h', 10,...
-                'R', NaN, 'c', NaN, ...
+                'R', [], 'c', [], ...
                 'phi', rand(1,1)*2*pi, ...
                 'theta', rand(1,1)*45*pi/180, ...
                 'coa', []);
@@ -9,15 +9,19 @@ function [cam, x] = make_viewpoint(cam,varargin)
     w = cfg.w;
     h = cfg.h;
 
-    if isnan(cfg.c)
-        if isempty(cfg.coa)
-            coa = transpose(mvnrnd([0 0 0],[(w/6)^2 (h/6)^2 0]));    
+    if isempty(cfg.coa)
+        coa = transpose(mvnrnd([0 0 0],[(w/6)^2 (h/6)^2 0]));
+    else
+        coa = cfg.coa;
+    end
+
+    if isempty(cfg.c)
+        if isfield(cam, 'vfov')
+            fov = min(cam.hfov, cam.hfov);
         else
-            coa = cfg.coa;
+            fov = cam.hfov;
         end
-
-        cam_dist = 1.5*w/2/tan(cam.hfov/2);
-
+        cam_dist = 2*w/2/tan(fov/2);
         c = [cam_dist*sin(cfg.theta)*cos(cfg.phi); ...
             cam_dist*sin(cfg.theta)*sin(cfg.phi); ...
             cam_dist*cos(cfg.theta)];
@@ -25,7 +29,7 @@ function [cam, x] = make_viewpoint(cam,varargin)
         c = cfg.c;
     end
 
-    if isnan(cfg.R)
+    if isempty(cfg.R)
         look_at = (coa-c)/norm(coa-c);
         look_up = [0 1 0]'-dot([0 1 0]',look_at)*look_at;
         look_down = -look_up/norm(look_up);

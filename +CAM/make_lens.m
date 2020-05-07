@@ -1,10 +1,19 @@
-function cam = make_lens(cam, dist_params, A, dist_model);
-    if nargin < 4 || isempty(dist_model)
-        dist_model = 'div';
+function cam = make_lens(cam, proj_params, A, proj_model);
+    if nargin < 4 || isempty(proj_model) || strcmp(proj_model, 'div')
+        proj_model = 'div';
+        cam.q_norm = proj_params;
+        cam.A = A;
+        unnorm_fun = str2func(['CAM.unnormalize_' proj_model]);
+        cam.q = unnorm_fun(cam.q_norm, cam.A);
     end
-    cam.q_norm = dist_params;
-    cam.dist_model = dist_model;
-    cam.A = A;
-    unnorm_fun = str2func(['CAM.unnormalize_' dist_model]);
-    cam.q = unnorm_fun(cam.q_norm, cam.A);
+
+    cam.backproj_fn = ['backproject_' proj_model];
+    cam.proj_fn = ['project_' proj_model];
+    cam.proj_model = proj_model;
+    cam.proj_params = proj_params;
+
+    [HFOV, VFOV, DFOV] = CAM.calc_FOV(cam.nx, cam.ny, cam.K, str2func(['RAD.' cam.backproj_fn]), cam.proj_params, 'units', 'rad');
+    cam.hfov = HFOV;
+    cam.vfov = VFOV;
+    cam.dfov = DFOV;
 end

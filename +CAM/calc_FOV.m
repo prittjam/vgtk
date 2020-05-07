@@ -1,34 +1,43 @@
 function [HFOV, VFOV, DFOV] = calc_FOV(nx, ny, K,...
                                         rad_backproj_fn,...
-                                        rad_backproj_params)
+                                        rad_backproj_params,...
+                                        varargin)
+    cfg = struct('units', 'degrees');
+    cfg = cmp_argparse(cfg, varargin{:});
     % HFOV
     x = [1 K(2,3) 1; nx K(2,3) 1]';
     x_norm = K \ x;
     rs = vecnorm(x_norm(1:2,:),2,1);
     [~, theta] = rad_backproj_fn(rs, rad_backproj_params);
-    HFOV = sum(theta) * 180 / pi;
+    HFOV = sum(theta);
 
     % VFOV
     x = [K(1,3) 1 1; K(1,3) ny 1]';
     x_norm = K \ x;
     rs = vecnorm(x_norm(1:2,:),2,1);
     [~, theta] = rad_backproj_fn(rs, rad_backproj_params);
-    VFOV = sum(theta) * 180 / pi;
+    VFOV = sum(theta);
 
     % DFOV
     xcrn1 = [1 1 1; nx ny 1]';
     xcrn_norm1 = K \ xcrn1;
     rs1 = vecnorm(xcrn_norm1(1:2,:),2,1);
     [~, theta1] = rad_backproj_fn(rs1, rad_backproj_params);
-    DFOV1 = sum(theta1) * 180 / pi;
+    DFOV1 = sum(theta1);
 
     xcrn2 = [nx 1 1; 1 ny 1]';
     xcrn_norm2 = K \ xcrn2;
     rs2 = vecnorm(xcrn_norm2(1:2,:),2,1);
     [~, theta2] = rad_backproj_fn(rs2, rad_backproj_params);
-    DFOV2 = sum(theta2) * 180 / pi;
+    DFOV2 = sum(theta2);
 
     DFOV = min(DFOV1, DFOV2);
+
+    if strcmp(cfg.units, 'degrees')
+        HFOV = HFOV * 180 / pi;
+        VFOV = VFOV * 180 / pi;
+        DFOV = DFOV * 180 / pi;
+    end
 end
 
 function [DFOV, uplim, uplim_theta] = calc_max_r(nx, ny, K,...

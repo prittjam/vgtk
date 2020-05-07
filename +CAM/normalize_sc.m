@@ -1,8 +1,10 @@
-function dist_params = normalize_sc(dist_params, A)
-    sc = A(1,1);
-    a = dist_params{1} / sc;
+function proj_params = normalize_sc(proj_params, K)
+    % proj_params -- [a0 a2 a3 a4]
+
+    sc = K(1,1);
+    a = proj_params / sc;
     a(2) = a(2) * (sc^2);
     a(3) = a(3) * (sc^(3/2));
     a(4) = a(4) * (sc^4);
-    dist_params{1} = a;
+    proj_params = a;
 end

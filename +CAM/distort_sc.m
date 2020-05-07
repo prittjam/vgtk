@@ -1,10 +1,11 @@
 function v = distort_sc(u, K, dist_params)
-    % dist_params -- cell
+    % dist_params -- [a0 a2 a3 a4]
+    % compare to matlab cell:
         % {1}: [a0 a2 a3 a4]  % MappingCoefficients
         % {2}: [cx cy]        % DistortionCenter
         % {3}: [s1 s2; s3 s4] % Stretchmatrix
 
-    a = dist_params{1};
+    a = dist_params;
     if any(abs(a)) > 0
         m = size(u,1);
         if (m == 2)

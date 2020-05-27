@@ -2,8 +2,12 @@ function [HFOV, VFOV, DFOV] = calc_FOV(nx, ny, K,...
                                         rad_backproj_fn,...
                                         rad_backproj_params,...
                                         varargin)
-    cfg = struct('units', 'degrees');
+    cfg = struct('units', 'degrees', 'fisheye', false, 'img', []);
     cfg = cmp_argparse(cfg, varargin{:});
+    if cfg.fisheye
+        assert(~isempty(cfg.img));
+        keyboard % TBD
+    end
     % HFOV
     x = [1 K(2,3) 1; nx K(2,3) 1]';
     x_norm = K \ x;

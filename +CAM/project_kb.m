@@ -6,14 +6,14 @@ function v = project_kb(u, K, proj_params)
         if (m == 2)
             v = PT.homogenize(u);
         else
-            v = PT.renormI(u);
+            v = u;
         end
         if ~isempty(K)
-            v = K \ v;
+            v = K \ PT.renormI(v);
         end
 
         r = vecnorm(v(1:2,:),2,1);
-        theta = atan(r);
+        theta = atan2(r, v(3,:));
         theta2 = theta.^2;
         pows = (1:numel(proj_params)) .* (proj_params~=0);
         theta_d = theta .* (1 + (theta2' .^ pows) * proj_params')';

@@ -9,14 +9,16 @@ function v = backproject_div(u, K, proj_params)
         else
             v = u;
         end
-        v = K \ v;
+        if ~isempty(K)
+            v = K \ PT.renormI(v);
+        end
 
-        dv = 1+q*(v(1,:).^2+v(2,:).^2);
-        v(1:2,:) = bsxfun(@rdivide,v(1:2,:),dv); 
+        v(3,:) = 1+q*(v(1,:).^2+v(2,:).^2);
         
-        v = K * v;
-        if (m == 2)
-            v = v(1:2,:);
+        if ~isempty(K)
+            v(1:2,:) = bsxfun(@rdivide,v(1:2,:),v(3,:)); 
+            v(3,:) = 1;
+            v = K * v;
         end
     else
         v = u;

@@ -9,7 +9,7 @@ function v = backproject_kb(u, K, proj_params)
             v = u;
         end
         if ~isempty(K)
-            v = K \ v;
+            v = K \ PT.renormI(v);
         end
 
         r = vecnorm(v(1:2,:),2,1);
@@ -24,18 +24,24 @@ function v = backproject_kb(u, K, proj_params)
             if numel(rts) == 0
                 throw()
             else
-                ru(k) = tan(min(rts));
+                theta(k) = min(rts);
             end
         end
-        ind = find(r > 1e-8);
-        inv_r = ones(1, size(r,2));
-        inv_r(ind) = 1.0 ./ r(ind);
-        cdist = ones(1,size(r,2));
-        cdist(ind) = ru(ind) .* inv_r(ind);
-        v = [v(1:2,:) .* cdist; ones(1,size(v,2))];
-
+        v(3, :) = 0;
+        ind = abs(theta - pi/2) > 1e-8;
+        v(3, ind) = 1 ./ tan(theta(ind));
+        
+        ind = (r > 1e-8);
+        v(1:2,ind) = v(1:2,ind) ./ r(ind);
+        
         if ~isempty(K)
-            v = K * v;
+            ru = ones(size(r)) * NaN;
+            valid_ind = theta < (pi/2 - 1e-5);
+            ru(valid_ind) = tan(theta(valid_ind));
+            v(1:2,ind) = v(1:2,ind) .* ru(ind);
+            v(3,ind) = 1;
+            v(:,ind) = K * v(:,ind);
+            v(:,~ind) = NaN;
         end
         if (m == 2)
             v = v(1:2,:);

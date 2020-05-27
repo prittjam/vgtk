@@ -9,16 +9,21 @@ function v = backproject_sc(u, K, proj_params)
         else
             v = u;
         end
-        v = K \ v;
+        if ~isempty(K)
+            v = K \ PT.renormI(v);
+        end
 
         a0 = a(1);
         a = a(2:end);
         r = vecnorm(v(1:2,:),2,1);
         pows = (2:numel(a)+1) .* (a~=0);
-        dv = (a0 + (r'.^(pows)) * a')';
-        v(1:2,:) = bsxfun(@rdivide, v(1:2,:), dv); 
+        v(3,:) = (a0 + (r'.^(pows)) * a')';
         
-        v = K * v;     
+        if ~isempty(K)
+            v(1:2,:) = bsxfun(@rdivide,v(1:2,:),v(3,:)); 
+            v(3,:) = 1;
+            v = K * v;
+        end
         if (m == 2)
             v = v(1:2,:);
         end

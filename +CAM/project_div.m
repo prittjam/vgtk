@@ -7,16 +7,18 @@ function v = project_div(u, K, proj_params)
         if (m == 2)
             v = PT.homogenize(u);
         else
-            v = PT.renormI(u);
+            v = u;
         end
         if ~isempty(K)
-            v = K \ v;
+            v = K \ PT.renormI(v);
         end
 
-        xu = v(1,:);
-        yu = v(2,:);
-        v(1,:) = xu/2./(q*yu.^2+xu.^2*q).*(1-sqrt(1-4*q*yu.^2-4*xu.^2*q));
-        v(2,:) = yu/2./(q*yu.^2+xu.^2*q).*(1-sqrt(1-4*q*yu.^2-4*xu.^2*q));
+        R = vecnorm(v(1:2,:),2,1);
+        Z = v(3,:);
+        r = max((Z+sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R),...
+                       (Z-sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R));
+        v(1:2,:) = v(1:2,:) .* r ./ R;
+        v(3,:) = 1;
         
         if ~isempty(K)
             v = K * v;

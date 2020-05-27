@@ -25,7 +25,7 @@ function [timg,trect,T,S] = transform(img,T0,varargin)
                         'FillValues', cfg.FillValues);
         trect = [1 1 nx ny];
     else
-        [T,S] = IMG.register_by_size(T0,border,cfg.size, ...
+        [T,S,border] = IMG.register_by_size(T0,border,cfg.size, ...
                                     'LockAspectRatio', false);
 
         tbounds = tformfwd(T,border);

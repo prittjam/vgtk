@@ -1,12 +1,20 @@
-function [T,S] = register_by_size(T0,border,sz,varargin)
+function [T,S,border] = register_by_size(T0,border,sz,varargin)
     cfg.lockaspectratio = true;
     [cfg,leftover] = cmp_argparse(cfg,varargin{:});
+    
+    cc = mean(border);
+    tborder = tformfwd(T0,border);
+
+    while any(isnan(tborder))
+        border = cc + 0.95 * (border - cc);
+        tborder = tformfwd(T0, border);
+    end
+
+    xextent = max(tborder(:,1))-min(tborder(:,1));
+    yextent = max(tborder(:,2))-min(tborder(:,2));
 
     nx = sz(2);
     ny = sz(1);
-    tborder = tformfwd(T0,border);
-    xextent = max(tborder(:,1))-min(tborder(:,1));
-    yextent = max(tborder(:,2))-min(tborder(:,2));
     s = [(nx-1)/xextent (ny-1)/yextent];
     
     if cfg.lockaspectratio

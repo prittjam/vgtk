@@ -12,5 +12,9 @@ function draw(xgrid, varargin)
         end
     end
     hold on
-    scatter(xgrid(1,:), xgrid(2,:), cfg.size, 'filled', varargin{:});
+    line_cfg.linewidth = 1;
+    line_cfg.color = 'red';
+    [line_cfg, varargin] = cmp_argparse(line_cfg, varargin{:});
+    scatter(xgrid(1,:), xgrid(2,:), cfg.size, 'filled',...
+            'MarkerFaceColor',line_cfg.color, varargin{:});
 end

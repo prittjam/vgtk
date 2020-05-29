@@ -15,10 +15,13 @@ function draw(ax, c, varargin)
                cy + R .* sin(phi);...
                ones(1, num_pts)];
         hold on
-        if any(strcmpi('color',varargin))
-            plot(ax, pts(1,:), pts(2,:), varargin{:});
+        [cfg, leftover] = cmp_argparse(struct('color',[]),varargin{:});
+        if isvector(cfg.color) && isnumeric(cfg.color)
+            plot(ax, pts(1,:), pts(2,:), "Color", cmap(cfg.color(k),:), leftover{:});
+        elseif isempty(cfg.color)
+            plot(ax, pts(1,:), pts(2,:), "Color", cmap(k,:), leftover{:});
         else
-            plot(ax, pts(1,:), pts(2,:), "Color", cmap(k,:), varargin{:});
+            plot(ax, pts(1,:), pts(2,:), varargin{:});
         end
     end
 end

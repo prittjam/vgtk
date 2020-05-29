@@ -1,6 +1,7 @@
 function [timg,trect,T,S] = transform(img,T0,varargin)
     cfg = struct('border', [], 'size', size(img),...
-                 'pure_xform', false, 'FillValues',255);
+                 'pure_xform', false, 'FillValues',255,...
+                 'fov', []);
     cfg = cmp_argparse(cfg,varargin{:});
 
     nx = size(img,2);
@@ -8,11 +9,15 @@ function [timg,trect,T,S] = transform(img,T0,varargin)
 
     if ~isempty(cfg.border)
         border = cfg.border;
+    elseif ~isempty(cfg.fov)
+        x0 = tan(cfg.fov/2)/(sqrt(2));
+        rborder = T0.tdata.K * [-x0 x0 x0 -x0; -x0 -x0 x0 x0;1 1 1 1];
+        border = tforminv(rborder(1:2,:)', T0);
     else
         border = [1  1; ...
-                nx 1; ...    
-                nx ny; ...
-                1  ny];
+                  nx 1; ...    
+                  nx ny; ...
+                  1  ny];
     end
 
     if cfg.pure_xform

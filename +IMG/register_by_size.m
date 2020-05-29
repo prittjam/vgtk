@@ -6,7 +6,7 @@ function [T,S,border] = register_by_size(T0,border,sz,varargin)
     tborder = tformfwd(T0,border);
 
     while any(isnan(tborder))
-        border = cc + 0.95 * (border - cc);
+        border = cc + 0.99 * (border - cc);
         tborder = tformfwd(T0, border);
     end
 

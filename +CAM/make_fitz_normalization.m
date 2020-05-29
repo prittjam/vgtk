@@ -5,7 +5,7 @@
 %  Written by James Pritts
 %
 function [A,sc] = make_fitz_normalization(cc, varargin)
-     if cc == [0; 0]
+     if all(cc == 0)
           A = eye(3);
           sc = 1;
      else

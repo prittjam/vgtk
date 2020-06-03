@@ -16,13 +16,13 @@ function v = project_kb(u, K, proj_params)
         theta = atan2(r, v(3,:));
         theta2 = theta.^2;
         pows = (1:numel(proj_params)) .* (proj_params~=0);
-        theta_d = theta .* (1 + (theta2' .^ pows) * proj_params')';
+        rd = theta .* (1 + (theta2' .^ pows) * proj_params')';
 
         ind = find(r > 1e-8);
         inv_r = ones(1, size(r,2));
         inv_r(ind) = 1.0 ./ r(ind);
         cdist = ones(1,size(r,2));
-        cdist(ind) = theta_d(ind) .* inv_r(ind);
+        cdist(ind) = rd(ind) .* inv_r(ind);
         v = [v(1:2,:) .* cdist; ones(1,size(v,2))];
 
         if ~isempty(K)

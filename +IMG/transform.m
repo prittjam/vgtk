@@ -10,8 +10,13 @@ function [timg,trect,T,S] = transform(img,T0,varargin)
     if ~isempty(cfg.border)
         border = cfg.border;
     elseif ~isempty(cfg.fov)
-        x0 = tan(cfg.fov/2)/(sqrt(2));
-        rborder = T0.tdata.K * [-x0 x0 x0 -x0; -x0 -x0 x0 x0;1 1 1 1];
+        [~,~,fov] = CAM.calc_FOV(nx, ny, T0.tdata.K,...
+                    T0.tdata.rad_backproject_fn, T0.tdata.proj_params);
+        fov = min(fov, cfg.fov) * pi / 180;
+        x0 = tan(fov/2)/(sqrt(1 + ny^2/nx^2));
+        y0 = tan(fov/2)/(sqrt(1 + nx^2/ny^2));
+        
+        rborder= T0.tdata.K * [-x0 x0 x0 -x0; -y0 -y0 y0 y0; 1 1 1 1];
         border = tforminv(rborder(1:2,:)', T0);
     else
         border = [1  1; ...

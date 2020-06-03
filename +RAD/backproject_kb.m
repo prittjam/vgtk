@@ -6,11 +6,11 @@ function [ru, theta] = backproject_kb(rd, proj_params)
         rts = real(rts(abs(imag(rts))<1e-8));
         rts = rts(rts >= 0);
         if numel(rts) == 0
-            throw()
+            theta(p) = NaN;
         else
             theta(p) = min(rts);
         end
     end
-    ind = find(abs(abs(theta) - pi/2) > 1e-8);
+    ind = abs(theta - pi/2) > 1e-8;
     ru(ind) = tan(theta(ind));
 end

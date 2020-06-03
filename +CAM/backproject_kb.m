@@ -22,7 +22,7 @@ function v = backproject_kb(u, K, proj_params)
             rts = real(rts(abs(imag(rts))<1e-8));
             rts = rts(rts >= 0);
             if numel(rts) == 0
-                throw()
+                theta(k) = NaN;
             else
                 theta(k) = min(rts);
             end

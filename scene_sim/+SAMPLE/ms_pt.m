@@ -20,7 +20,7 @@ function [x, x_norm] = ms_pt(n, ct_type, dist_model, dist_params)
     cam = CAM.make_lens(cam, dist_params, cam.K, dist_model);
     cam = CAM.make_viewpoint(cam);
 
-    X = CSPOND_SET.point_ct(n, wplane, hplane, 'regular', true,...
+    X = CSPOND_SET.point_csponds(n, wplane, hplane, 'regular', true,...
                             'direction', [1;0], 'direction2', [3;2]);
     X = X(1:3,:);
     % GRID.draw(X)

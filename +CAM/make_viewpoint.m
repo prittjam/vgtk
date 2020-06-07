@@ -10,7 +10,7 @@ function [cam, x] = make_viewpoint(cam,varargin)
     h = cfg.h;
 
     if isempty(cfg.coa)
-        coa = transpose(mvnrnd([0 0 0],[(w/6)^2 (h/6)^2 0]));
+        coa = transpose(mvnrnd([0 0 0],[w^2/2 h^2/2 0]));
     else
         coa = cfg.coa;
     end

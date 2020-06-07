@@ -7,6 +7,10 @@ function arc_list = sample(c, s, varargin)
     %   s -- endpoints, array 4xN: [x1...; y1...; x2...; y2...]
     % Returns:
     %   arc_list -- list of sampled circular arcs
+    if size(s,1) == 6
+        s = RP2.inhomogenize(s);
+    end
+
     assert(all(CIRCLE.belongs(c, s(1:2,:))))
     assert(all(CIRCLE.belongs(c, s(3:4,:))))
 

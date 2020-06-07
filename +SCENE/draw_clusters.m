@@ -16,8 +16,8 @@ function draw_clusters(x, Gapp, c, arcs, Gvpc, varargin)
     end
     CIRCLE.draw(gca,c(1:3,Gvpc==1), 'Color', 'm', 'LineWidth', 1.75, 'LineStyle', ':');
     CIRCLE.draw(gca,c(1:3,Gvpc==2), 'Color', 'g', 'LineWidth', 1.75, 'LineStyle', ':');
-    ARC.draw(gca,arcs(:,Gvpc==1),'Color', 'm', 'LineWidth',1.5);
-    ARC.draw(gca,arcs(:,Gvpc==2),'Color', 'g', 'LineWidth',1.5);
+    ARC.draw(arcs(:,Gvpc==1),'Color', 'm', 'LineWidth',1.5);
+    ARC.draw(arcs(:,Gvpc==2),'Color', 'g', 'LineWidth',1.5);
     
     if ~strcmp(cfg.fig_path, 'none')
         saveas(f, cfg.fig_path);

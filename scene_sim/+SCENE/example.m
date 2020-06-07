@@ -21,7 +21,7 @@ arcs = {};
 for k=1:5
     arcs1 = ARC.sample(c);
     arcs = {arcs{:} arcs1{:}};
-    % ARC.draw(gca,arcs1, 'linewidth', 2)
+    % ARC.draw(arcs1, 'linewidth', 2)
 end
 
 keyboard

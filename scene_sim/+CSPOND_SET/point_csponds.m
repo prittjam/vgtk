@@ -1,4 +1,7 @@
-function [x,cspond,G] = point_ct(N, w, h, varargin)
+function [x,cspond,G] = point_csponds(N, w, h, varargin)
+    % Set of point correspondences that are endpoints of
+    % the segments of scene parallel lines
+    
     cfg = struct('direction', 'rand', 'direction2', 'rand', 'regular', false);
     cfg = cmp_argparse(cfg,varargin{:});
 

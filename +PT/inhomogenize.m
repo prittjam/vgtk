@@ -1,3 +1,3 @@
-function x2 = inhomogenize(x)
-    x2 = x(1:2,:);
+function x = inhomogenize(x)
+    x = x(1:end-1,:);
 end

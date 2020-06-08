@@ -14,8 +14,8 @@ function draw_clusters(x, Gapp, c, arcs, Gvpc, varargin)
     for k = 1:max(Gapp)
         LAF.draw(gca, x(:,Gapp==k), 'Color', cmap(k,:), 'LineWidth', 1.5);
     end
-    CIRCLE.draw(gca,c(1:3,Gvpc==1), 'Color', 'm', 'LineWidth', 1.75, 'LineStyle', ':');
-    CIRCLE.draw(gca,c(1:3,Gvpc==2), 'Color', 'g', 'LineWidth', 1.75, 'LineStyle', ':');
+    CIRCLE.draw(c(1:3,Gvpc==1), 'Color', 'm', 'LineWidth', 1.75, 'LineStyle', ':');
+    CIRCLE.draw(c(1:3,Gvpc==2), 'Color', 'g', 'LineWidth', 1.75, 'LineStyle', ':');
     ARC.draw(arcs(:,Gvpc==1),'Color', 'm', 'LineWidth',1.5);
     ARC.draw(arcs(:,Gvpc==2),'Color', 'g', 'LineWidth',1.5);
     

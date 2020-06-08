@@ -1,4 +1,4 @@
-function draw(ax, c, varargin)
+function draw(c, varargin)
     % draws a circle c = [xc...; yc...; r...]
     num_pts = 500;
 
@@ -17,11 +17,11 @@ function draw(ax, c, varargin)
         hold on
         [cfg, leftover] = cmp_argparse(struct('color',[]),varargin{:});
         if isvector(cfg.color) && isnumeric(cfg.color)
-            plot(ax, pts(1,:), pts(2,:), "Color", cmap(cfg.color(k),:), leftover{:});
+            plot(pts(1,:), pts(2,:), "Color", cmap(cfg.color(k),:), leftover{:});
         elseif isempty(cfg.color)
-            plot(ax, pts(1,:), pts(2,:), "Color", cmap(k,:), leftover{:});
+            plot(pts(1,:), pts(2,:), "Color", cmap(k,:), leftover{:});
         else
-            plot(ax, pts(1,:), pts(2,:), varargin{:});
+            plot(pts(1,:), pts(2,:), varargin{:});
         end
     end
 end

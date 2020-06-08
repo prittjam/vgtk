@@ -116,7 +116,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
     % axis equal
     % % LINE.draw(gca,L2);
     % LAF.draw(gca,xd);
-    % CIRCLE.draw(gca,c, 'Color', 'g', 'LineWidth', 1.75, 'LineStyle', ':');
+    % CIRCLE.draw(c, 'Color', 'g', 'LineWidth', 1.75, 'LineStyle', ':');
     % ARC.draw(arcs,'Color', 'm', 'LineWidth',1.5);
     % scatter(uvwp(1,:),uvwp(2,:))
     % keyboard

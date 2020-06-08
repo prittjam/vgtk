@@ -4,18 +4,20 @@
 %
 %  Written by James Pritts
 %
-function [timg,trect,T,S] = undistort_div(img,K,q,varargin)
+function [timg,trect,T,S] = undistort_div(img,K,proj_params,varargin)
     T0 = maketform('custom', 2, 2, ...
                 @undistort_div_xform, ...
                 @distort_div_xform, ...
-                struct('K',K,'q',q));
+                struct('K', K,...
+                       'proj_params', proj_params,...
+                       'rad_backproject_fn', @RAD.backproject_div));
     [timg,trect,T,S] = IMG.transform(img,T0,varargin{:});
 end
 
 function v = undistort_div_xform(u, T)
-    v = CAM.undistort_div(u', T.tdata.K, T.tdata.q)';
+    v = CAM.undistort_div(u', T.tdata.K, T.tdata.proj_params)';
 end
 
 function v = distort_div_xform(u, T)
-    v = CAM.distort_div(u', T.tdata.K, T.tdata.q)';
+    v = CAM.distort_div(u', T.tdata.K, T.tdata.proj_params)';
 end

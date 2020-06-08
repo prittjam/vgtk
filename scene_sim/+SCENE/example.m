@@ -16,7 +16,7 @@ gt = CAM.make_viewpoint(cam);
 % close all; figure; axis equal; LINESEG.draw(gca,S);
 c = LINE.distort_div(gt.P' \ L, gt.A, gt.q_norm);
 
-% close all; figure; axis equal; CIRCLE.draw(gca,c);
+% close all; figure; axis equal; CIRCLE.draw(c);
 arcs = {};
 for k=1:5
     arcs1 = ARC.sample(c);

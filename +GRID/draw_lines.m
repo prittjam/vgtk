@@ -3,7 +3,7 @@ function draw_lines(lgrid, distorted, varargin)
         distorted = false;
     end
     if distorted
-        CIRCLE.draw(gca, lgrid, varargin{:});
+        CIRCLE.draw(lgrid, varargin{:});
     else
         LINE.draw(gca, lgrid, varargin{:});
     end

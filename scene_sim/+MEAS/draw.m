@@ -1,4 +1,4 @@
-function draw(meas, varinput, idx, opt, varinput_opt)
+function draw(meas, varinput, idx, opt, varinput_opt, keys)
     if nargin < 2 || isempty(varinput)
         varinput = MEAS.make_empty_map();
     end
@@ -14,6 +14,9 @@ function draw(meas, varinput, idx, opt, varinput_opt)
         varinput_opt('arc') = {'color', 'green', 'linewidth', 0.8,...
                                'LineStyle', '--'};
     end
+    if nargin<6 || isempty(keys)
+        keys = meas.keys;
+    end
 
     plot_fns = containers.Map();
     plot_fns('rgn') = @GRID.draw;
@@ -24,7 +27,7 @@ function draw(meas, varinput, idx, opt, varinput_opt)
     varinput_plot_fns = containers.Map();
     varinput_plot_fns('arc') = @CIRCLE.draw;
 
-    for key = meas.keys
+    for key = keys
         key = key{1};
         meas_key = meas(key);
         if ~isempty(meas_key)
@@ -33,8 +36,10 @@ function draw(meas, varinput, idx, opt, varinput_opt)
             if nargin < 3 || isempty(idx)
                 plot_fn(meas_key, opt_key{:});
             else
-                idx_key = idx(key);
-                plot_fn(meas_key(:,[idx_key{:}]), opt_key{:});
+                if idx.isKey(key)
+                    idx_key = idx(key);
+                    plot_fn(meas_key(:,[idx_key{:}]), opt_key{:});
+                end
             end
         end
 

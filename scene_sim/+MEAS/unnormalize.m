@@ -9,7 +9,7 @@ function [meas, varinput] = unnormalize(meas, K, varinput)
         key = key{1};
         unnorm_fn = unnorm_fns(key);
         if ~isempty(meas(key))
-            if nargout(unnorm_fn) == 2
+            if nargout(unnorm_fn) == 2 && nargout == 2 
                 [meas(key), varinput(key)] = ...
                             unnorm_fn(meas(key), K, varinput(key));
             else

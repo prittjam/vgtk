@@ -1,10 +1,8 @@
 function proj_params = unnormalize_sc(proj_params, K)
     % proj_params -- [a0 a2 a3 a4 cx cy]
 
-    sc = K(1,1);
-    a = proj_params * sc;
-    a(2) = a(2) / (sc^2);
-    a(3) = a(3) / (sc^3);
-    a(4) = a(4) / (sc^4);
-    proj_params = a;
+    f = K(1,1);
+    proj_params(2) = proj_params(2) / (f^2);
+    proj_params(3) = proj_params(3) / (f^3);
+    proj_params(4) = proj_params(4) / (f^4);
 end

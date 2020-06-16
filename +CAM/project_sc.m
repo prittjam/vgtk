@@ -14,7 +14,7 @@ function v = project_sc(u, K, proj_params)
         if ~isempty(K)
             v = K \ PT.renormI(v);
         end
-        
+
         v = v - c;
 
         R = vecnorm(v(1:2,:),2,1);

@@ -23,11 +23,14 @@ function [gt1, gt2, X, L, xd, c, arcs,...
     f_mm = 5*rand(1)+3;
     ccd_mm = 4.8;
     cam = CAM.make_ccd(f_mm, ccd_mm, cfg.nx, cfg.ny);
-    A = inv(CAM.make_fitz_normalization(cam.cc));
-    cam = CAM.make_lens(cam, cfg.q, A);
-    gt1 = CAM.make_viewpoint(cam);
+    cam = CAM.make_lens(cam, cfg.q, cam.K, 'div');
+    R = [[0.9633         0    0.2684];...
+         [0.0020   -1.0000   -0.0073];...
+         [0.2683    0.0076   -0.9633]];
+    c = -R \ [-8.0750; 0.3004; 28.7295];
+    gt1 = CAM.make_viewpoint(cam,'R',R,'c',c);
     
-    % First Plane
+    %%%%%%%%%%%%%%%%%%%%%%%%% First Plane
     u = PT.renormI(gt1.P34 * [1; 0; 0; 0]);
     v = PT.renormI(gt1.P34 * [0; 1; 0; 0]);
     w = PT.renormI(gt1.P34 * [0; 0; 1; 0]);
@@ -38,7 +41,12 @@ function [gt1, gt2, X, L, xd, c, arcs,...
                                           'direction2', [0; 1],...
                                           'regular', true);
     
-    xd = CAM.image_planar_pts(X, gt1);
+    % project_fn = str2func(['RP2.' cam.proj_fn]);
+    % x = RP2.mtimesx(cam.P, X);
+    % xd = project_fn(x, cam.K, cam.proj_params);
+    % xd_norm = RP2.normalize(xd, cam.K);
+    % x = RP2.renormI(x);
+    xd = image_planar_pts(X, gt1);
     Gvpx = num2cell(ones(1,size(Gapp,2)).*[1; 2], 1);
     Gvlx = ones(1,size(Gapp,2)) * 1;
 
@@ -52,7 +60,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
                                                 'direction', [1; 0],...
                                                 'regular', true);
     Gvpc = ones(1,size(L,2)).* 1;
-    [c, ~, arcs] = image_lines(L, S, gt1.P, gt1.cc, gt1.q);
+    [c, ~, arcs] = image_planar_lines(L, S, gt1);
     % SCENE.draw_clusters(xd, Gapp, c, arcs,  Gvpc);
 
     [L1, S1, ~, ~] = CSPOND_SET.lines(6, wplane, hplane,...
@@ -60,15 +68,15 @@ function [gt1, gt2, X, L, xd, c, arcs,...
                                                 'regular', true);
     Gvpc1 = ones(1,size(L1,2)).* 2;
     Gvpc = [Gvpc ones(1,size(L1,2)).* 2];
-    [c1, ~, arcs1] = image_lines(L1, S1, gt1.P, gt1.cc, gt1.q);
+    [c1, ~, arcs1] = image_planar_lines(L1, S1, gt1);
     L = [L L1];
     S = [S S1];
     c = [c c1];
     arcs = [arcs, arcs1];
     % SCENE.draw_clusters(xd, Gapp, c, arcs, Gvpc)
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Second Plane
+    % keyboard
+
+    %%%%%%%%%%%%%%%%%%%%%%%%% Second Plane
     A = [[0 1 0]' [0 0 1]' [1 0 0]']; % Changes to {V, W, U} basis
     % perm2 = [[0 0 1]' [1 0 0]' [0 1 0]']; % Changes to {V, W, U} basis
     % [P_2,~,P34_2,R_2,t_2] = PLANE.make_viewpoint2(gt1.R * A, gt1.c, cam); 
@@ -81,7 +89,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
                                             'direction', [1; 0],...
                                             'direction2', [0; 1],...
                                             'regular', true);
-    xd2 = CAM.image_planar_pts(X2, gt2);
+    xd2 = image_planar_pts(X2, gt2);
     Gapp = [Gapp Gapp2+max(Gapp)];
     Gvpx = [Gvpx num2cell(ones(1,size(Gapp2,2)).*[2; 3], 1)];
     Gvlx = [Gvlx ones(1,size(Gapp2,2)) * 2];
@@ -98,17 +106,20 @@ function [gt1, gt2, X, L, xd, c, arcs,...
     X = [X X2];
     xd = [xd xd2];
     % SCENE.draw_LAFs(xd, Gapp);
+    % keyboard
 
     % Lines
     [L2, S2, ~, ~] = CSPOND_SET.lines(8, wplane, hplane,...
                                                  'direction', [0; 1],...
                                                  'regular', true);
     Gvpc = [Gvpc ones(1,size(L2,2)).* 3];
-    [c2, ~, arcs2] = image_lines(L2, S2, gt2.P, cam.cc, gt2.q);
+    [c2, ~, arcs2] = image_planar_lines(L2, S2, gt2);
     L = [L L2];
     S = [S S2];
     c = [c c2];
     arcs = [arcs, arcs2];
+    % SCENE.draw_clusters(xd, Gapp, c, arcs, Gvpc)
+    % keyboard
 
     uvw = cam.K * gt1.R;
     % uvwp = PT.renormI(RP2.rd_div(RP2.renormI(uvw),cc,q));
@@ -120,7 +131,6 @@ function [gt1, gt2, X, L, xd, c, arcs,...
     % ARC.draw(arcs,'Color', 'm', 'LineWidth',1.5);
     % scatter(uvwp(1,:),uvwp(2,:))
     % keyboard
-    % SCENE.draw_clusters(xd, Gapp, c, arcs, Gvpc)
 
     if cfg.outliers
         % Outliers 1
@@ -128,7 +138,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
         Gapp = [Gapp GappOut1+max(Gapp)];
         Gvpx = [Gvpx num2cell(ones(1,size(GappOut1,2)).* nan, 1)];
         Gvlx = [Gvlx ones(1,size(GappOut1,2)) * 1];
-        xout1 = CAM.image_planar_pts(Xout1, gt1);
+        xout1 = image_planar_pts(Xout1, gt1);
         X = [X Xout1];
         xd = [xd xout1];
         % SCENE.draw_LAFs(X, Gapp);
@@ -139,7 +149,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
         Gapp = [Gapp GappOut2+max(Gapp)];
         Gvpx = [Gvpx num2cell(ones(1,size(GappOut2,2)).* nan, 1)];
         Gvlx = [Gvlx ones(1,size(GappOut2,2)) * 2];
-        xout2 = CAM.image_planar_pts(Xout2, gt1);
+        xout2 = image_planar_pts(Xout2, gt1);
         X = [X Xout2];
         xd = [xd xout2];
         % SCENE.draw_LAFs(Xout2, GappOut2);
@@ -148,7 +158,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
         % Line Outliers 1
         [LOut1, SOut1, ~, ~] = CSPOND_SET.lines(6, wplane, hplane, 'regular', true);
         Gvpc = [Gvpc ones(1,size(LOut1,2)).* nan];
-        [cOut1, ~, arcsOut1] = image_lines(LOut1, SOut1, gt1.P, cam.cc, gt1.q);
+        [cOut1, ~, arcsOut1] = image_planar_lines(LOut1, SOut1, gt1);
         L = [L LOut1];
         S = [S SOut1];
         c = [c cOut1];
@@ -158,7 +168,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
         [LOut2, SOut2, ~, ~] = CSPOND_SET.lines(6, wplane, hplane,...
                                                             'regular', true);
         Gvpc = [Gvpc ones(1,size(LOut2,2)).* nan];
-        [cOut2, ~, arcsOut2] = image_lines(LOut2, SOut2, gt2.P, cam.cc, gt2.q);
+        [cOut2, ~, arcsOut2] = image_planar_lines(LOut2, SOut2, gt2);
         L = [L LOut2];
         S = [S SOut2];
         c = [c cOut2];
@@ -186,31 +196,37 @@ function [gt1, gt2, X, L, xd, c, arcs,...
         Gappnck = [Gappnck GappnckOut2+max(Gappnck)];
     end
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % % Check
-    % Imaged scene
-    % SCENE.draw_clusters(xd, Gapp, c, arcs, Gvpc);
+    %%%%%%%%%%%%%% DEBUG
+    %%%%%%% Imaged scene
+    % GRID.draw(xd)
+    % GRID.draw_lines(c, true)
+    % axis equal
+    % keyboard
 
-    % % % % Rectify the first plane
+    %%%%%%% Rectify the first plane
     % Hr = cam.K * gt1.R' * inv(cam.K);
-    % xu = RP2.ru_div(xd, gt1.cc, gt1.q);
+    % xu = RP2.backproject_div(xd, cam.K, gt1.q_norm);
     % xr = PT.renormI(blkdiag(Hr,Hr,Hr) * xu);
-    % SCENE.draw_LAFs(xr, Gapp);
+    % GRID.draw(xr)
+    % keyboard
 
-    % % % Rectify the second plane
+    % %%%%%%% Rectify the second plane
     % Hr = cam.K * gt2.R' * inv(cam.K);
-    % xu = RP2.ru_div(xd, gt2.cc, gt2.q);
+    % xu = RP2.backproject_div(xd, cam.K, gt2.q_norm);
     % xr = PT.renormI(blkdiag(Hr,Hr,Hr) * xu);
-    % SCENE.draw_LAFs(xr, Gapp);
+    % GRID.draw(xr)
+    % keyboard
 
-    % % Rectify the second plane using gt1.R
+    % %%%%%%% Rectify the second plane using gt1.R
     % % perm = [[0 1 0]' [0 0 1]' [1 0 0]'];
     % % R1_permuted = perm' * gt1.R;
     % % OR
     % R1_permuted = [gt1.R(:,2) gt1.R(:,3) gt1.R(:,1)];
     % Hr = cam.K * R1_permuted' * inv(cam.K);
     % xr = PT.renormI(blkdiag(Hr,Hr,Hr) * xu);
-    % SCENE.draw_LAFs(xr, Gapp);
+    % GRID.draw(xr);
+    % keyboard
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -250,12 +266,11 @@ function [cspond, Gvpnck, Gvlnck, Gappnck] = get_outliers_labeling(N)
     Gappnck = ones(1,size(Gvpnck,2));
 end
 
-function [c, s, arcs] = image_lines(L, S, P, cc, q)
-    A = inv(CAM.make_fitz_normalization(cc));
-    q_norm = CAM.normalize_div(q, A);
-    c = LINE.distort_div(P' \ L, A, q_norm);
+function [c, s, arcs] = image_planar_lines(L, S, cam)
+    P = cam.P;
+    c = LINE.distort_div(P' \ L, cam.K, cam.proj_params);
 
-    s = CAM.distort_div(PT.renormI(P * S), A, q_norm);
+    s = CAM.distort_div(PT.renormI(P * S), cam.K, cam.proj_params);
     arcs = ARC.sample(c, reshape(s(1:2,:),4,[]), 'num_pts', 110);
     chords = PT.renormI(cross(s(:,1:2:end), s(:,2:2:end)));
     n = chords(1:2,:);
@@ -263,4 +278,17 @@ function [c, s, arcs] = image_lines(L, S, P, cc, q)
     n = n .* sign(dot(n, s(1:2,1:2:end) - c(1:2,:)));
     p = c(1:2,:) + c(3,:) .* n;  % middle points
     c = [c; p; n]; % [x_center; y_center; radius; x_oncircle; y_oncircle; x_normal; y_normal;]
+end
+
+function [xd, x] = image_planar_pts(X, cam)
+    % Images coplanar points
+    % Args:
+    %   X -- scene plane points in RP2
+    %   cam -- camera struct
+    % Returns:
+    %   xd -- image points in RP2
+
+    project_fn = str2func(['RP2.' cam.proj_fn]);
+    x = RP2.mtimesx(cam.P, X);
+    xd = project_fn(x, cam.K, cam.proj_params);
 end

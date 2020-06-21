@@ -1,7 +1,7 @@
-function v = distort_div(u, K, dist_params)
-    % dist_params -- q
+function v = project_div(u, K, proj_params)
+    % proj_params -- q
 
-    q = dist_params(1);
+    q = proj_params(1);
     if abs(q) > 0
         m = size(u,1);
         if (m == 2)
@@ -9,14 +9,20 @@ function v = distort_div(u, K, dist_params)
         else
             v = u;
         end
-        v = K \ v;
+        if ~isempty(K)
+            v = K \ PT.renormI(v);
+        end
 
-        xu = v(1,:);
-        yu = v(2,:);
-        v(1,:) = xu/2./(q*yu.^2+xu.^2*q).*(1-sqrt(1-4*q*yu.^2-4*xu.^2*q));
-        v(2,:) = yu/2./(q*yu.^2+xu.^2*q).*(1-sqrt(1-4*q*yu.^2-4*xu.^2*q));
+        R = vecnorm(v(1:2,:),2,1);
+        Z = v(3,:);
+        r = max((Z+sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R),...
+                       (Z-sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R));
+        v(1:2,:) = v(1:2,:) .* r ./ R;
+        v(3,:) = 1;
         
-        v = K * v;
+        if ~isempty(K)
+            v = K * v;
+        end
         if (m == 2)
             v = v(1:2,:);
         end

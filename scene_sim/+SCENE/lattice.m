@@ -196,14 +196,17 @@ function [gt1, gt2, X, L, xd, c, arcs,...
         Gappnck = [Gappnck GappnckOut2+max(Gappnck)];
     end
 
-    %%%%%%%%%%%%% DEBUG
-    %%%%%% Imaged scene
-    for k1=1:max(Gapp)
-        GRID.draw(xd(:,Gapp==k1), 'linewidth', 2)
-    end
-    GRID.draw_lines(c, true, 'color', Gvpc, 'linewidth', 2)
-    axis equal
-    keyboard
+    % %%%%%%%%%%%% DEBUG
+    % %%%%%% Imaged scene
+    % for k1=1:max(Gapp)
+    %     GRID.draw(xd(:,Gapp==k1), 'linewidth', 2)
+    % end
+    % GRID.draw_lines(c, true, 'color', Gvpc, 'linewidth', 2)
+    % GRID.draw(CAM.project_div(u,cam.K,cam.proj_params))
+    % GRID.draw(CAM.project_div(v,cam.K,cam.proj_params))
+    % GRID.draw(CAM.project_div(w,cam.K,cam.proj_params))
+    % axis equal
+    % keyboard
 
     % %%%%%% Rectify the first plane
     % Hr = cam.K * gt1.R' * inv(cam.K);

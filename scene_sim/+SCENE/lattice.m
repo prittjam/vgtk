@@ -252,7 +252,7 @@ end
 
 function [c, s, arcs] = image_lines(L, S, P, cc, q)
     A = inv(CAM.make_fitz_normalization(cc));
-    q_norm = CAM.normalize_div(A);
+    q_norm = CAM.normalize_div(q, A);
     c = LINE.distort_div(P' \ L, A, q_norm);
 
     s = CAM.distort_div(PT.renormI(P * S), A, q_norm);

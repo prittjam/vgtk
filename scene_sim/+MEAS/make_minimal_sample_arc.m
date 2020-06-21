@@ -1,4 +1,4 @@
-function [L, arcs, circles] = make_minimal_sample_arc(n, wplane, hplane, cam, direction)
+function [L, arcs, circles] = make_minimal_sample_arc(n, wplane, hplane, cam, direction, varargin)
     %
     % Args:
     %   n
@@ -12,10 +12,11 @@ function [L, arcs, circles] = make_minimal_sample_arc(n, wplane, hplane, cam, di
     %   circles -- relative angles between line segments:
     %            [relangle(vp1,vp2), ..., relangle(vp1,vpN)];
 
-    cfg.num_arc_pts = 110;
+    cfg.num_pts = 110;
+    cfg = cmp_argparse(cfg, varargin{:});
 
     assert(n > 1)
-    if nargin == 4
+    if nargin < 4 || isempty(direction)
         direction = 'rand';
     end
     [L, S] = CSPOND_SET.lines(n, wplane, hplane,...
@@ -29,5 +30,5 @@ function [L, arcs, circles] = make_minimal_sample_arc(n, wplane, hplane, cam, di
     [p, n] = ARC.get_midpoint(circles, s);
     circles = [circles; p; n];
 
-    arcs = ARC.sample(circles, s, 'num_pts', cfg.num_arc_pts);
+    arcs = ARC.sample(circles, s, 'num_pts', cfg.num_pts);
 end

@@ -6,7 +6,7 @@ function [gt1, gt2, X, L, xd, c, arcs,...
     cfg = struct('nx', 1000, ...
                 'ny', 1000,...
                 'cc', [], ...
-                'q', -4,...
+                'q', -1,...
                 'outliers', true);
     cfg = cmp_argparse(cfg,varargin{:});
 
@@ -24,10 +24,10 @@ function [gt1, gt2, X, L, xd, c, arcs,...
     ccd_mm = 4.8;
     cam = CAM.make_ccd(f_mm, ccd_mm, cfg.nx, cfg.ny);
     cam = CAM.make_lens(cam, cfg.q, cam.K, 'div');
-    R = [[0.9633         0    0.2684];...
-         [0.0020   -1.0000   -0.0073];...
-         [0.2683    0.0076   -0.9633]];
-    c = -R \ [-8.0750; 0.3004; 28.7295];
+    R = [[0.9721   -0.0000    0.2346];...
+         [0.0582   -0.9688   -0.2410];...
+         [0.2273    0.2480   -0.9417]];
+    c = -R \ [-3.2719; -11.8752; 24.6979];
     gt1 = CAM.make_viewpoint(cam,'R',R,'c',c);
     
     %%%%%%%%%%%%%%%%%%%%%%%%% First Plane
@@ -196,14 +196,16 @@ function [gt1, gt2, X, L, xd, c, arcs,...
         Gappnck = [Gappnck GappnckOut2+max(Gappnck)];
     end
 
-    %%%%%%%%%%%%%% DEBUG
-    %%%%%%% Imaged scene
-    % GRID.draw(xd)
-    % GRID.draw_lines(c, true)
-    % axis equal
-    % keyboard
+    %%%%%%%%%%%%% DEBUG
+    %%%%%% Imaged scene
+    for k1=1:max(Gapp)
+        GRID.draw(xd(:,Gapp==k1), 'linewidth', 2)
+    end
+    GRID.draw_lines(c, true, 'color', Gvpc, 'linewidth', 2)
+    axis equal
+    keyboard
 
-    %%%%%%% Rectify the first plane
+    % %%%%%% Rectify the first plane
     % Hr = cam.K * gt1.R' * inv(cam.K);
     % xu = RP2.backproject_div(xd, cam.K, gt1.q_norm);
     % xr = PT.renormI(blkdiag(Hr,Hr,Hr) * xu);
@@ -217,16 +219,16 @@ function [gt1, gt2, X, L, xd, c, arcs,...
     % GRID.draw(xr)
     % keyboard
 
-    % %%%%%%% Rectify the second plane using gt1.R
-    % % perm = [[0 1 0]' [0 0 1]' [1 0 0]'];
-    % % R1_permuted = perm' * gt1.R;
-    % % OR
+    %%%%%%% Rectify the second plane using gt1.R
+    % perm = [[0 1 0]' [0 0 1]' [1 0 0]'];
+    % R1_permuted = perm' * gt1.R;
+    % OR
     % R1_permuted = [gt1.R(:,2) gt1.R(:,3) gt1.R(:,1)];
     % Hr = cam.K * R1_permuted' * inv(cam.K);
     % xr = PT.renormI(blkdiag(Hr,Hr,Hr) * xu);
     % GRID.draw(xr);
     % keyboard
-    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

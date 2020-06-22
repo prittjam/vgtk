@@ -50,8 +50,10 @@ function draw(meas, varinput, idx, opt, varinput_opt, keys)
             if nargin < 3 || isempty(idx)
                 varinput_plot_fn(varinput_key, varinput_opt_key{:});
             else
-                idx_key = idx(key);
-                varinput_plot_fn(varinput_key(:,[idx_key{:}]), varinput_opt_key{:});
+                if idx.isKey(key)
+                    idx_key = idx(key);
+                    varinput_plot_fn(varinput_key(:,[idx_key{:}]), varinput_opt_key{:});
+                end
             end
         end
     end

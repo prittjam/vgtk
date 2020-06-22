@@ -1,25 +1,30 @@
 function draw(xgrid, varargin)
-    cfg.size = 50;
-    [cfg, varargin] = cmp_argparse(cfg, varargin{:});
+    cfg.size = 25;
+    cfg.color = [];
+    [cfg, leftover] = cmp_argparse(cfg, varargin{:});
+    
+    marker_params = {'Marker','.','MarkerSize',cfg.size};
+
+    color_flag = isvector(cfg.color) & isnumeric(cfg.color) & ~all(cfg.color<=1 & cfg.color>=0);
+    if color_flag
+        N = max(cfg.color);
+    else
+        N = size(xgrid,2);
+    end
+    colormap(hsv(N))
+    cmap = colormap;
+    
     if size(xgrid,1) > 2
         xgrid = PT.renormI(xgrid);
-        if size(xgrid,1) > 3
-            for k=1:size(xgrid,2)
-                hold on
-                plot(xgrid(1:3:end,k), xgrid(2:3:end,k), varargin{:});
+        for k=1:size(xgrid,2)
+            hold on
+            if color_flag
+                plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color", cmap(cfg.color(k),:), leftover{:});
+            elseif isempty(cfg.color)
+                plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color", cmap(k,:), leftover{:});
+            else
+                plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},varargin{:});
             end
-            xgrid = reshape(xgrid,3,[]);
         end
-    end
-    hold on
-    line_cfg.linewidth = 1;
-    line_cfg.color = [];
-    [line_cfg, varargin] = cmp_argparse(line_cfg, varargin{:});
-    if isempty(line_cfg.color)
-        scatter(xgrid(1,:), xgrid(2,:), cfg.size, 'filled',...
-                varargin{:});
-    else 
-        scatter(xgrid(1,:), xgrid(2,:), cfg.size, 'filled',...
-                'MarkerFaceColor',line_cfg.color, varargin{:});
     end
 end

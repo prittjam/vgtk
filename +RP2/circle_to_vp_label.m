@@ -1,6 +1,7 @@
 function G = circle_to_vp_label(c,varargin)
     cfg = struct('vqT', 100, ...
-                 'min_support', 6);
+                 'min_support', 6,...
+                 'n_clusters', 10);
     [cfg,~] = cmp_argparse(cfg,varargin{:});
      
     x = [c(1:2,:); ...
@@ -58,7 +59,7 @@ function G = circle_to_vp_label(c,varargin)
                     ones(size(nck,1),1),m,m);
             A = A+A';
             A = A/max(A(:));
-            [G,V,D] = spectralcluster(A,10, ...
+            [G,V,D] = spectralcluster(A,cfg.n_clusters, ...
                                     'Distance','precomputed');
             G = reshape(G,1,[]);
         end

@@ -51,3 +51,5 @@ function lh = draw(l,varargin)
             line(xs(:,k), ys(:,k),  varargin{:});
         end
     end
+
+    colormap(gray)

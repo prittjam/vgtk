@@ -32,4 +32,5 @@ function draw(c, varargin)
             plot(pts(1,:), pts(2,:), varargin{:});
         end
     end
+    colormap(gray)
 end

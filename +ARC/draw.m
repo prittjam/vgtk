@@ -27,5 +27,6 @@ function draw(arcs, varargin)
         end
     end
     hold off;
+    colormap(gray)
 
     

@@ -23,8 +23,9 @@ function draw(xgrid, varargin)
             elseif isempty(cfg.color)
                 plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color", cmap(k,:), leftover{:});
             else
-                plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},varargin{:});
+                plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color",cfg.color,leftover{:});
             end
         end
     end
+    colormap(gray)
 end

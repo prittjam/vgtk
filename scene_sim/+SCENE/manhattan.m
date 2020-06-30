@@ -25,7 +25,7 @@ function [gt, xd, Gapp, Gvpx, c, s, arcs, Gvpc, X, L, S, uvw] = manhattan(vararg
     ccd_mm = 4.8;
     cam = CAM.make_ccd(f, ccd_mm, cfg.nx, cfg.ny);
     A = inv(CAM.make_fitz_normalization(cam.cc));
-    cam = CAM.make_lens(cam, cfg.q, A);
+    cam = CAM.make_lens(cam, cfg.q, 'div');
     gt = CAM.make_viewpoint(cam);
 
     U = [rand(2,1); 0];  

@@ -9,7 +9,7 @@ ccd_mm = 4.8;
 q = -7;
 cam = CAM.make_ccd(f, ccd_mm, w_img, h_img);
 A = inv(CAM.make_fitz_normalization(cam.cc));
-cam = CAM.make_lens(cam, q, A);
+cam = CAM.make_lens(cam, q, 'div');
 gt = CAM.make_viewpoint(cam);
 
 [L, S, ~, ~] = CSPOND_SET.lines(7, w_plane, h_plane);

@@ -35,7 +35,8 @@ function [L, arcs, circles] = make_minimal_sample_arc(N, wplane, hplane, cam, di
         s = [s s1(:,1)];
 
         u = PT.renormI(cam.P * eye(3));
-        L = [u(2,3); -u(1,3); 0];
+        L = [u(2,3); 0; 100];
+        L(2,1) = -L(3,1) * u(3,3)/u(2,3) - u(1,3);
 
         % Segments
         N = 1;
@@ -68,6 +69,10 @@ function [L, arcs, circles] = make_minimal_sample_arc(N, wplane, hplane, cam, di
         assert(all(abs(dot(l(:,1:3),u(:,[1 1 1])))<1e-9))
         assert(all(abs(dot(l(:,4),u(:,2)))<1e-9))
         assert(all(abs(dot(l(:,5),u(:,3)))<1e-9))
+
+        % close all
+        % LINE.draw2(l)
+        % keyboard
     end
     %%%%%%%%%%%%%%%%
 
@@ -83,6 +88,7 @@ function [L, arcs, circles] = make_minimal_sample_arc(N, wplane, hplane, cam, di
     % close all
     % CIRCLE.draw(circles,'Color',[1 1 1 2 3])
     % ARC.draw(arcs,'LineWidth',2,'Color',[1 1 1 2 3])
+    % GRID.draw(s)
     % axis equal
     % keyboard
     % %%%%%%%%%%%%%%%%

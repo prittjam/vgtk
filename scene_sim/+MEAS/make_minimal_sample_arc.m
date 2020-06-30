@@ -34,7 +34,7 @@ function [L, arcs, circles] = make_minimal_sample_arc(N, wplane, hplane, cam, di
         l = [l l1(:,1)];
         s = [s s1(:,1)];
 
-        u = PT.renormI(cam.P * eye(3));
+        u = PT.renormI(cam.K * (cam.R * eye(3)));
         L = [u(2,3); 0; 100];
         L(2,1) = -L(3,1) * u(3,3)/u(2,3) - u(1,3);
 
@@ -61,6 +61,7 @@ function [L, arcs, circles] = make_minimal_sample_arc(N, wplane, hplane, cam, di
         s1 = edges(1:2,:) + k1 .* (edges(3:4,:) - edges(1:2,:));
         S = [PT.homogenize(s0); PT.homogenize(s1)];
         s2 = reshape(S, 6, []);
+        s2(4:6) = s2(4:6) + 5 * (RP2.renormI(u(:,3))- s2(4:6));
         l2 = L;
 
         l = [l l2];
@@ -73,6 +74,9 @@ function [L, arcs, circles] = make_minimal_sample_arc(N, wplane, hplane, cam, di
         % close all
         % LINE.draw2(l)
         % keyboard
+
+        % l0 = LINE.normalize(l, cam.K);
+        % u0 = cam.K \ u;
     end
     %%%%%%%%%%%%%%%%
 

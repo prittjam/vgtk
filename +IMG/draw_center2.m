@@ -1,0 +1,6 @@
+function img = draw_center(img, c)
+    img = PT.draw_raster(img,c(1),c(2),...
+                         'xsize',35,'linewidth',12,'goal',true);
+    img = PT.draw_raster(img,c(1),c(2),...
+                         'xsize',6,'linewidth',12,'goal',true);
+end

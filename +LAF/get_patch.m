@@ -11,7 +11,7 @@ end
 if nargin < 4
 	H = [];
 end
-patch = zeros(sz,sz,3);
+patch = zeros(sz,sz,3,'uint8');
 A = inv(invA);
 lin = linspace(-1,1,sz);
 [x y] = meshgrid(lin,lin);
@@ -24,5 +24,5 @@ x1 = reshape(p(1,:),sz,sz);
 y1 = reshape(p(2,:),sz,sz);
 [a,b] = meshgrid(1:sz,1:sz);
 for i = 1:numel(a)
-	patch(a(i),b(i),:) = img(y1(i),x1(i),:);
+	patch(b(i),a(i),:) = img(y1(i),x1(i),:);
 end

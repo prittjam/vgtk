@@ -1,4 +1,4 @@
-function [cam, circles, arcs, vp_labels] = manhattan_arcs()
+function gt = manhattan_arcs()
     e = eye(3);
 
     N = [5 5 5];
@@ -57,15 +57,14 @@ function [cam, circles, arcs, vp_labels] = manhattan_arcs()
     % axis equal
     % keyboard
     % %%%%%%%%%%%%%%%%
-    % %%%%%%%%%%%%%%%% DRAW DISTORTED
+    % % %%%%%%%%%%%%%%%% DRAW DISTORTED
     % close all
-    % CIRCLE.draw(circles,'Color',vp_labels)
-    % ARC.draw(arcs,'LineWidth',2,'Color',vp_labels,'MarkerSize',10)
-    % GRID.draw(s,'Color',vp_labels,'Size',10)
-    % GRID.draw(vp,'Size',30)
+    % CIRCLE.draw(gt.circles,'Color',gt.vp_labels)
+    % ARC.draw(num2cell(reshape(gt.arcs,[100,3,5])),'LineWidth',2,'Color',gt.vp_labels,'MarkerSize',10)
+    % GRID.draw(gt.vp,'Size',30)
     % axis equal
     % keyboard
-    % %%%%%%%%%%%%%%%%
+    % % %%%%%%%%%%%%%%%%
     % %%%%%%%%%%%%%%%% DRAW NORM
     % close all
     % figure
@@ -76,20 +75,22 @@ function [cam, circles, arcs, vp_labels] = manhattan_arcs()
     % keyboard
     % %%%%%%%%%%%%%%%%
 
-    % gt = struct();
-    % gt.K = cam.K;
-    % gt.R = cam.R;
-    % gt.t = cam.c;
-    % gt.vp_ud = cam.vp;
-    % gt.vp = vp;
-    % gt.vp_norm = vp_norm;
-    % gt.q = cam.proj_params;
-    % gt.imsize_x = cam.nx;
-    % gt.imsize_y = cam.ny;
-    % gt.circles = circles;
-    % gt.circles_norm = circles_norm;
-    % gt.arcs = [arcs{:}];
-    % gt.arcs_norm = [arcs_norm{:}];
-    % gt.vp_labels = vp_labels;
+    gt = struct();
+    gt.K = cam.K;
+    gt.R = cam.R;
+    gt.t = cam.c;
+    gt.vp_ud = cam.vp;
+    gt.vp = vp;
+    gt.vp_norm = vp_norm;
+    gt.q = cam.proj_params;
+    gt.imsize_x = cam.nx;
+    gt.imsize_y = cam.ny;
+    gt.circles = circles;
+    gt.circles_norm = circles_norm;
+    gt.arcs = arcs;
+    gt.arcs_norm = [arcs_norm{:}];
+    gt.vp_labels = vp_labels;
     % savejson2(gt, GetFullPath('~/gt.json'));
+    % save('~/gt.mat', 'gt')
+    % keyboard
 end

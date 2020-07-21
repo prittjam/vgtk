@@ -1,4 +1,4 @@
-function v = project_div(u, K, proj_params, K_new)
+function v = project_div(u, K_new, proj_params, K)
     % proj_params -- [q, c]
 
     % Radial distortion
@@ -22,9 +22,11 @@ function v = project_div(u, K, proj_params, K_new)
         else
             v = u;
         end
-        if ~isempty(K)
+        if nargin==4 && ~isempty(K)
             v = K \ PT.renormI(v);
-            c = K \ [c'; 1];
+        end
+        if ~isempty(K_new)
+            c = K_new \ [c'; 1];
         end
 
         C = [1 0 c(1); 0 1 c(2); 0 0 1];
@@ -39,7 +41,7 @@ function v = project_div(u, K, proj_params, K_new)
         
         v = C * v;
 
-        if nargin==4 && ~isempty(K_new)
+        if ~isempty(K_new)
             v = K_new * v;
         end
         if (m == 2)

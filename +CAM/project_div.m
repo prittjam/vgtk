@@ -1,20 +1,7 @@
-function v = project_div(u, K_new, proj_params, K)
-    % proj_params -- [q, c]
+function v = project_div(u, K, proj_params)
+    % proj_params -- q
 
-    % Radial distortion
     q = proj_params(1);
-    
-    % Shift by distortion center
-    if numel(proj_params) == 3
-        c = proj_params([2 3]);
-    else
-        if ~isempty(K)
-            c = [0; 0];
-        else
-            c = K(1:2,3);
-        end
-    end
-
     if abs(q) > 0
         m = size(u,1);
         if (m == 2)
@@ -22,15 +9,9 @@ function v = project_div(u, K_new, proj_params, K)
         else
             v = u;
         end
-        if nargin==4 && ~isempty(K)
+        if ~isempty(K)
             v = K \ PT.renormI(v);
         end
-        if ~isempty(K_new)
-            c = K_new \ [c'; 1];
-        end
-
-        C = [1 0 c(1); 0 1 c(2); 0 0 1];
-        v = C \ v;
 
         R = vecnorm(v(1:2,:),2,1);
         Z = v(3,:);
@@ -39,10 +20,8 @@ function v = project_div(u, K_new, proj_params, K)
         v(1:2,:) = v(1:2,:) .* r ./ R;
         v(3,:) = 1;
         
-        v = C * v;
-
-        if ~isempty(K_new)
-            v = K_new * v;
+        if ~isempty(K)
+            v = K * v;
         end
         if (m == 2)
             v = v(1:2,:);

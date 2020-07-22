@@ -10,7 +10,7 @@ function x = project_div2(u, K, q, cc, Kp)
     C = eye(3);
     C(1:2,3) = cc(1:2);
 
-    x = C \ (Kp \ u);
+    x = C \ (Kp \ PT.renormI(u));
 
     if q ~= 0
         R = vecnorm(x(1:2,:),2,1);

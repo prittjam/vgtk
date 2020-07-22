@@ -8,7 +8,7 @@ function x = project_div2(u, K, q, cc, Kp)
     end
 
     C = eye(3);
-    C(1:2,3) = cc;
+    C(1:2,3) = cc(1:2);
 
     x = C \ (Kp \ u);
 

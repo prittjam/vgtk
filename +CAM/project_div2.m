@@ -21,4 +21,4 @@ function x = project_div2(u, K, q, cc, Kp)
         x(3,:) = 1;
     end
     
-    x = K*C*x;
+    x = K * (C * x);

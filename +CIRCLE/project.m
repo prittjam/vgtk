@@ -1,9 +1,9 @@
-function [p, n] = project(c, x)
+function [p, n] = project(x, c)
     % Projects point / N points
     % on the circle / N corresponding circles
     % Args:
-    %     c -- [3 x N] -- circles
-    %     x -- [2/3 x N] -- points on corresponding circles
+    %     x -- [2/3 x N] -- N points
+    %     c -- [3 x N] -- N corresponding circles
     if size(x, 1) == 3
         x = PT.renormI(x);
     end

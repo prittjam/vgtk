@@ -33,4 +33,5 @@ function draw(c, varargin)
         end
     end
     colormap(gray)
+    axis equal
 end

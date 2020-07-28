@@ -32,6 +32,9 @@ function v = backproject_div(u, K, proj_params)
             v(3,:) = 1;
             v = K * v;
         end
+        if (m == 2)
+            v = v(1:2,:);
+        end
     else
         v = u;
     end

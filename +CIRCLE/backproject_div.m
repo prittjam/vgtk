@@ -7,15 +7,14 @@ function L = backproject_div(circ, K, proj_params, p)
     %                                   [cx, cy] -- distortion center
     % [p -- 2xN -- [px...; py...]]
 
-    if numel(proj_params) == 1
-        cc = [0 0]';
-    else
-        cc = proj_params(2:3)';
-    end
-    C = [1 0 cc(1); ...
-         0 1 cc(2); ...
-         0 0    1]; 
-    q = q(1);
+    proj_params0 = zeros(1,3);
+    proj_params0(1:size(proj_params,2)) = proj_params;
+    
+    % Radial distortion
+    q = proj_params0(1);
+
+    % Shift by distortion center
+    C = [1 0 proj_params0(2); 0 1 proj_params0(3); 0 0 1];
 
     if size(circ,1)==3
         assert(nargin==4)

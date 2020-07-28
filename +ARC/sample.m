@@ -11,8 +11,8 @@ function arc_list = sample(c, s, varargin)
         s = RP2.inhomogenize(s);
     end
 
-    assert(all(CIRCLE.belongs(c, s(1:2,:))))
-    assert(all(CIRCLE.belongs(c, s(3:4,:))))
+    assert(all(CIRCLE.belongs(s(1:2,:), c)))
+    assert(all(CIRCLE.belongs(s(3:4,:), c)))
 
     cfg.num_pts = 100;
     cfg = cmp_argparse(cfg, varargin{:});

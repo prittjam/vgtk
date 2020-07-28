@@ -1,4 +1,12 @@
-function q = unnormalize_div(q, A)
-    sc = A(1,1);
-    q = q / (sc^2);
+function proj_params = unnormalize_div(proj_params, K)
+    % proj_params -- [q cx cy]
+    
+    f = K(1,1);
+    proj_params(1) = proj_params(1) / (f^2);
+
+    if numel(proj_params) > 1
+        cc = proj_params(2:3)';
+        cc = K * [cc; 1];
+        proj_params(2:3) = cc(1:2);
+    end
 end

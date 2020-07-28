@@ -1,4 +1,4 @@
-function res = belongs(circ, x)
+function res = belongs(x, circ)
     cx = circ(1,:);
     cy = circ(2,:);
     r = circ(3,:);

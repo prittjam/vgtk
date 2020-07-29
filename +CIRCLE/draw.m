@@ -6,7 +6,7 @@ function draw(c, varargin)
     num_pts = 500;
 
     t = linspace(0, 1, num_pts);
-    color_flag = isvector(cfg.color) & isnumeric(cfg.color) & ~all(cfg.color<=1 & cfg.color>=0);
+    color_flag = isvector(cfg.color) & isnumeric(cfg.color) & (~all(cfg.color<=1 & cfg.color>=0) || (numel(cfg.color)==size(c,2)));
     if color_flag
         cfg.color(isnan(cfg.color)) = max(cfg.color)+1;
         N = max(cfg.color);

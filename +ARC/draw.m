@@ -3,7 +3,7 @@ function draw(arcs, varargin)
 
     [cfg, leftover] = cmp_argparse(struct('color',[]),varargin{:});
 
-    color_flag = isvector(cfg.color) & isnumeric(cfg.color) & ~all(cfg.color<=1 & cfg.color>=0);
+    color_flag = isvector(cfg.color) & isnumeric(cfg.color) & (~all(cfg.color<=1 & cfg.color>=0) || (numel(cfg.color)==numel(arcs)));
     if color_flag
         cfg.color(isnan(cfg.color)) = max(cfg.color)+1;
         N = max(cfg.color);

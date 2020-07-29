@@ -70,6 +70,10 @@ function gt = manhattan_arcs(sigma_list, outliers)
                 s2_o = CIRCLE.project(s1_o+[rand(2,N_o) * 200+100; zeros(1,N_o)], circles_o);
                 s_o = [s1_o; s2_o];
                 arcs_o = ARC.sample(circles_o, s_o, 'num_pts', round(rand(1,N_o)*100+100));
+                labels_o = ones(1,numel(arcs_o))*NaN;
+            else
+                arcs_o = {};
+                labels_o = [];
             end
 
             vp = project_fn(cam.vp_ud, T, cam.proj_params);
@@ -110,7 +114,7 @@ function gt = manhattan_arcs(sigma_list, outliers)
             % gt.circles_norm = circles_norm;
             gt.arcs = {arcs{:} arcs_o{:}};
             % gt.arcs_norm = [arcs_norm{:}];
-            gt.vp_labels = [vp_labels ones(1,numel(arcs_o))*NaN];
+            gt.vp_labels = [vp_labels labels_o];
             % savejson2(gt, GetFullPath('~/gt.json'));
             % save('~/gt.mat', 'gt')
             % keyboard

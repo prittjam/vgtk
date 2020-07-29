@@ -18,6 +18,9 @@ function arc_list = sample(c, s, varargin)
     cfg = cmp_argparse(cfg, varargin{:});
 
     N = size(c,2);
+    if numel(cfg.num_pts) == 1
+        cfg.num_pts = ones(1,N) * cfg.num_pts;
+    end
     if nargin<2
         x1 = rand(1,N) .* 2 - 1;
         y1 = ((rand(1,N) > 0.5) .* 2 - 1) .* sqrt(1 - x1);
@@ -38,8 +41,8 @@ function arc_list = sample(c, s, varargin)
         phi2 = atan2(s2(2) - cntr(2), s2(1) - cntr(1));
         dphi = phi2 - phi1;
         dphi = mod((dphi + pi), 2 * pi) - pi;
-        t = linspace(0,1,cfg.num_pts);
+        t = linspace(0,1,cfg.num_pts(k));
         phi = t .* dphi + phi1;
-        arc_list{k} = [cntr(1) + R .* cos(phi); cntr(2) + R .* sin(phi); ones(1,cfg.num_pts)];
+        arc_list{k} = [cntr(1) + R .* cos(phi); cntr(2) + R .* sin(phi); ones(1,cfg.num_pts(k))];
     end
 end

@@ -1,11 +1,14 @@
-function [ld, obj] = project_div(l, K, q, cc)
-    if nargin < 4
-        cc = [0 0]';
-    end
+function [ld, obj] = project_div(l, K, proj_params)
+    % proj_params -- [q cx cy]
+    proj_params0 = zeros(1,3);
+    proj_params0(1:size(proj_params,2)) = proj_params;
+    
+    % Radial distortion
+    q = proj_params0(1);
 
-    C = [1 0 cc(1); ...
-         0 1 cc(2); ...
-         0 0    1];            
+    % Shift by distortion center
+    C = [1 0 proj_params0(2); 0 1 proj_params0(3); 0 0 1];
+
     if abs(q) > 0
         if ~isempty(K)
             l = LINE.normalize(l, K);

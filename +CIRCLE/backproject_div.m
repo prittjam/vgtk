@@ -1,10 +1,20 @@
-function L = undistort_div(circ, K, q, p)
+function L = backproject_div(circ, K, proj_params, p)
     % circ -- circle in the image (hom.) coordinates
     %         3xN -- [cx...; cy...; R] or
     %         4xN -- [px...; py...; nx...; ny...]
     % K -- camera matrix
-    % q -- division model parameter
+    % proj_params -- [q, cx, cy], where q -- division model parameter,
+    %                                   [cx, cy] -- distortion center
     % [p -- 2xN -- [px...; py...]]
+
+    proj_params0 = zeros(1,3);
+    proj_params0(1:size(proj_params,2)) = proj_params;
+    
+    % Radial distortion
+    q = proj_params0(1);
+
+    % Shift by distortion center
+    C = [1 0 proj_params0(2); 0 1 proj_params0(3); 0 0 1];
 
     if size(circ,1)==3
         assert(nargin==4)

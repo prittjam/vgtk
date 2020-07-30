@@ -24,7 +24,7 @@ function [L, arcs, circles] = make_minimal_sample_arc(N, wplane, hplane, cam, di
     if nargin < 4 || isempty(direction)
         direction = 'rand';
     end
-    if direction==[0;0]
+    if (direction(1)<1e-11) && (direction(2)<1e-11)
         % XYZ -> ZXY
         [L, S] = CSPOND_SET.lines(N, wplane, hplane,...
                             'direction', [1;0;0], 'regular', true);

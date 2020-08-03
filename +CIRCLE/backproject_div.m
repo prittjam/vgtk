@@ -1,7 +1,8 @@
 function L = backproject_div(circ, K, proj_params, p)
     % circ -- circle in the image (hom.) coordinates
     %         3xN -- [cx...; cy...; R] or
-    %         4xN -- [px...; py...; nx...; ny...]
+    %         4xN -- [px...; py...; nx...; ny...] or
+    %         7xN -- [cx...; cy...; R;...; px...; py...; nx...; ny...]
     % K -- camera matrix
     % proj_params -- [q, cx, cy], where q -- division model parameter,
     %                                   [cx, cy] -- distortion center
@@ -25,9 +26,14 @@ function L = backproject_div(circ, K, proj_params, p)
         n = (p(1:2,:) - circ(1:2,:)) ./ circ(3,:);
         assert(all(abs(vecnorm(n,2,1)-1) < 1e-13))
         p = K \ p;
-    else
+    elseif size(circ,1)==4
         p = K \ PT.homogenize(circ(1:2,:));
         n = circ(3:4,:);
+    elseif size(circ,1)==7
+        p = K \ PT.homogenize(circ(4:5,:));
+        n = circ(6:7,:);
+    else
+        error('');
     end
 
     px = p(1,:);

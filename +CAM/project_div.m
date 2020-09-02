@@ -24,9 +24,14 @@ function v = project_div(u, K, proj_params)
 
         R = vecnorm(v(1:2,:),2,1);
         Z = v(3,:);
-        r = max((Z+sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R),...
-                       (Z-sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R));
-        v(1:2,:) = v(1:2,:) .* r ./ R;
+        if R==0
+            r = 0;
+            v(1:2,:) = v(1:2,:);
+        else
+            r = max((Z+sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R),...
+                        (Z-sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R));
+            v(1:2,:) = v(1:2,:) .* r ./ R;
+        end
         v(3,:) = 1;
 
         v = C * v;

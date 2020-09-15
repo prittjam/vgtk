@@ -6,7 +6,16 @@ function [HFOV, VFOV, DFOV] = calc_FOV(nx, ny, K,...
     cfg = cmp_argparse(cfg, varargin{:});
     if cfg.fisheye
         assert(~isempty(cfg.img));
-        keyboard % TBD
+        c_pts = imcontour(im2bw(imgaussfilt(cfg.img,1),0.085),1);
+        close all
+        c_pts = c_pts(:,c_pts(1,:)>0 & c_pts(2,:)>0);
+        c_pts = c_pts(:,c_pts(1,:)<=nx & c_pts(2,:)<=ny);
+        % TODO: add filtering
+        c = CIRCLE.fit({c_pts});
+        rect = [max(c(1:2,:)-c(3,:),0) min(c(1:2,:)+c(3,:), [nx; ny])]; %[x1 x2; y1 y2]
+        K(1:2,3) = K(1:2,3) - rect(:,1);
+        nx = rect(1,2) - rect(1,1);
+        ny = rect(2,2) - rect(2,1);
     end
     % HFOV
     x = [1 K(2,3) 1; nx K(2,3) 1]';

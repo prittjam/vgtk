@@ -7,12 +7,12 @@ function arc_list = sample(c, s, varargin)
     %   s -- endpoints, array 4xN: [x1...; y1...; x2...; y2...]
     % Returns:
     %   arc_list -- list of sampled circular arcs
-    if size(s,1) == 6
+    if nargin > 1 && ~isempty(s) && size(s,1) == 6
         s = RP2.inhomogenize(s);
+        assert(all(CIRCLE.belongs(s(1:2,:), c)))
+        assert(all(CIRCLE.belongs(s(3:4,:), c)))
     end
 
-    assert(all(CIRCLE.belongs(s(1:2,:), c)))
-    assert(all(CIRCLE.belongs(s(3:4,:), c)))
 
     cfg.num_pts = 100;
     cfg = cmp_argparse(cfg, varargin{:});
@@ -35,12 +35,17 @@ function arc_list = sample(c, s, varargin)
     for k=1:N
         cntr = c(1:2,k);
         R = c(3,k);
-        s1 = s(1:2,k);
-        s2 = s(3:4,k);
-        phi1 = atan2(s1(2) - cntr(2), s1(1) - cntr(1));
-        phi2 = atan2(s2(2) - cntr(2), s2(1) - cntr(1));
-        dphi = phi2 - phi1;
-        dphi = mod((dphi + pi), 2 * pi) - pi;
+        if nargin > 1 && ~isempty(s)
+            s1 = s(1:2,k);
+            s2 = s(3:4,k);
+            phi1 = atan2(s1(2) - cntr(2), s1(1) - cntr(1));
+            phi2 = atan2(s2(2) - cntr(2), s2(1) - cntr(1));
+            dphi = phi2 - phi1;
+            dphi = mod((dphi + pi), 2 * pi) - pi;
+        else
+            phi1 = 0;
+            dphi = 2*pi;
+        end
         t = linspace(0,1,cfg.num_pts(k));
         phi = t .* dphi + phi1;
         arc_list{k} = [cntr(1) + R .* cos(phi); cntr(2) + R .* sin(phi); ones(1,cfg.num_pts(k))];

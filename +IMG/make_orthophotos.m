@@ -1,4 +1,4 @@
-function rimgs = make_orthophotos(img, masks, model, varargin)
+function [rimgs, T_rect] = make_orthophotos(img, masks, model, varargin)
     cfg.reiterate = false;
     cfg.plot = false;
     cfg.vl_min_dist = 0.2;
@@ -23,10 +23,10 @@ function rimgs = make_orthophotos(img, masks, model, varargin)
 
     N = 3;
     if ~cfg.reiterate
-        rimgs = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg);
+        [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg);
     else
         while true
-            rimgs = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg);
+            [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg);
             ans = input('Retry(Y/y/N/n): ', 's');
             if strcmp(upper(ans),'N')
                 break
@@ -43,7 +43,7 @@ function rimgs = make_orthophotos(img, masks, model, varargin)
     end
 end
 
-function rimgs = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg)
+function [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg)
     N = 3;
 
     uimg = cfg.uimg;
@@ -64,6 +64,7 @@ function rimgs = rectify(img, masks, model, vl_min_dist, border_x, border_vl_sid
     intr{2} = CIRCLE.intersect_rect(ld0{2}, border_x);
     intr{2} = cellfun(@(x) x(:,all(x(1:2,:)>=[1;1]) & all(x(1:2,:)<=[nx;ny])), intr{2}, 'UniformOutput', false);
     
+    T_rect = ones(3,3,3,2) * NaN;
     for k=1:N
         for s=0:1
             border = [intr{s+1}{k} border_x(:,border_vl_side(k,:)==s)];
@@ -72,13 +73,15 @@ function rimgs = rectify(img, masks, model, vl_min_dist, border_x, border_vl_sid
             %                     'the border of the '...
             %                     num2str(k) 'nd plane.']);
             if size(border,2) > 1
-                rimgs{k}{s+1} = IMG.ru_div_rectify(...
+                [rimgs{k}{s+1},xborder,~,T] = IMG.ru_div_rectify(...
                                     max(img,masks{k}{s+1}),...
                                     model.Hs(:,:,k),...
                                     model.cc, model.q, ...
                                     'size', cfg.size,...
                                     'border', border(1:2,:)', ...
                                     'Registration', 'none');
+                T(1:2,3) = -xborder(1:2)';
+                T_rect(:,:,k,s+1) = T;
             else
                 rimgs{k}{s+1} = NaN;
             end

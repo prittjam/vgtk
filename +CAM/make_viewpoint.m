@@ -1,9 +1,10 @@
 function [cam, x] = make_viewpoint(cam,varargin)
     cfg = struct('w', 10, 'h', 10,...
-                'R', [], 'c', [], ...
+                'R', [], 'c', [], 'o', [0; 0; 0],...
                 'phi', rand(1,1)*2*pi, ...
                 'theta', rand(1,1)*45*pi/180, ...
-                'coa', []);
+                'coa', [],...
+                'cam_dist', []);
     cfg = cmp_argparse(cfg,varargin{:});
 
     w = cfg.w;
@@ -21,10 +22,14 @@ function [cam, x] = make_viewpoint(cam,varargin)
         else
             fov = cam.hfov;
         end
-        cam_dist = 2*w/2/tan(fov/2);
+        if isempty(cfg.cam_dist)
+            cam_dist = 2*w/2/tan(fov/2);
+        else
+            cam_dist = cfg.cam_dist;
+        end
         c = [cam_dist*sin(cfg.theta)*cos(cfg.phi); ...
             cam_dist*sin(cfg.theta)*sin(cfg.phi); ...
-            cam_dist*cos(cfg.theta)];
+            cam_dist*cos(cfg.theta)] + cfg.o;
     else
         c = cfg.c;
     end

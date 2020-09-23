@@ -8,8 +8,8 @@ function draw_clusters(x, Gapp, c, arcs, Gvpc, varargin)
     end
 
     axis ij equal off
-    xlim([0 1000]);
-    ylim([0 1000]);
+    xlim([1 1000]);
+    ylim([1 1000]);
     cmap = lines(max(Gapp));
     for k = 1:max(Gapp)
         LAF.draw(gca, x(:,Gapp==k), 'Color', cmap(k,:), 'LineWidth', 1.5);

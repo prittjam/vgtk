@@ -11,8 +11,8 @@ function masks = make_ld_masks(ld, l, pp, nx, ny)
             rectangle('Position',[1 1 nx ny],'FaceColor',clr.mask{(pp_vl_side(k)==s)+1});
             rectangle('Position',[ld(1:2,k)'-ld(3,k) 2*ld(3,k) 2*ld(3,k)],'FaceColor',clr.mask{(pp_vl_side(k)~=s)+1},'Curvature',[1 1]);
             axis ij
-            xlim([0,nx]);
-            ylim([0,ny]);
+            xlim([1,nx]);
+            ylim([1,ny]);
             fullscreen;
             masks01{s+1} = imresize(getframe(gca).cdata,[ny,nx]);
             close all

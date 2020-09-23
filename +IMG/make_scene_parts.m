@@ -32,8 +32,8 @@ function simgs = make_scene_img(img, ld, l, ud, x, xu, cspond, Gvl, c, Gvp)
                 GRID.draw(ud(:,k3), 'color','k','size',50);
                 GRID.draw(ud(:,k3), 'color',clr.vp{k3},'size',40);
             end
-            xlim([0,nx]);
-            ylim([0,ny]);
+            xlim([1,nx]);
+            ylim([1,ny]);
             fullscreen;
             simgs01{s+1} = imresize(getframe(gca).cdata,[ny,nx]);
             close all

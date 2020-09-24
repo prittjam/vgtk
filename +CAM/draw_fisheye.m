@@ -1,18 +1,16 @@
-function draw_camera(K, R, t, varargin)
+function draw_camera(K, Rt, varargin)
     cfg = struct('nx', 1000, 'ny', 1000,...
                  'dX', 30, 'dY', 30);
     cfg = cmp_argparse(cfg, varargin{:});
   
-    if ndims(t)==1
-      Rs = reshape(R,3,3,1);
-      ts = reshape(t,3,1);
+    if ndims(Rt)==2
+      Rts = reshape(Rt,3,4,1);
     else
-      Rs = R;
-      ts = t;
+      Rts = Rt;
     end
-    for k=1:size(ts,2)
-      R = Rs(:,:,k);
-      t = ts(:,k);
+    for k=1:size(Rts,3)
+      R = Rts(:,1:3,k);
+      t = Rts(:,4,k);
       alpha_c = K(1, 2);
       fc(1) = K(1, 1);
       fc(2) = K(2, 2);

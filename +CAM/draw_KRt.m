@@ -1,8 +1,17 @@
-function draw_camera(K, Rt, varargin)
-    cfg = struct('nx', 1000, 'ny', 1000,...
-                 'dX', 30, 'dY', 30);
+function draw_KRt(K, Rt, varargin)
+    cfg = struct('nx', 1000, 'ny', 1000, 'dX', 30);
     cfg = cmp_argparse(cfg, varargin{:});
   
+    alpha_c = K(1, 2);
+    fc(1) = K(1, 1);
+    fc(2) = K(2, 2);
+    cc(1) = K(1, 3);
+    cc(2) = K(2, 3);
+    
+    nx = cfg.nx;
+    ny = cfg.ny;
+    dX = cfg.dX;
+
     if ndims(Rt)==2
       Rts = reshape(Rt,3,4,1);
     else
@@ -11,15 +20,6 @@ function draw_camera(K, Rt, varargin)
     for k=1:size(Rts,3)
       R = Rts(:,1:3,k);
       t = Rts(:,4,k);
-      alpha_c = K(1, 2);
-      fc(1) = K(1, 1);
-      fc(2) = K(2, 2);
-      cc(1) = K(1, 3);
-      cc(2) = K(2, 3);
-      
-      % for test purpose
-      nx = cfg.nx; ny = cfg.ny;
-      dX = cfg.dX; dY = cfg.dY;
   
       % step 1: image plane to camera coordinate system
       IP = dX*[1 -alpha_c 0;...

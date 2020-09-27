@@ -47,7 +47,7 @@ function v = project_sc(u, K, proj_params)
                     rmax = inf;
                 end
                 rts2 = real(rts2(abs(imag(rts2))<1e-5));
-                rts2 = rts2(rts2 > 0);
+                rts2 = rts2(rts2 >= 0);
                 rts2 = rts2(rts2 < rmax);
                 if numel(rts2) < 1
                     r(k) = NaN;
@@ -58,7 +58,7 @@ function v = project_sc(u, K, proj_params)
                 % [~,idx]=min(real(R(k)-rts2));
                 % r(k) = rts2(idx);
             end
-            v(1:2,:) = v(1:2,:) .* r ./ R;
+            v(1:2,R~=0) = v(1:2,R~=0) .* r(:,R~=0) ./ R(:,R~=0);
             v(3,:) = 1;
         end
 

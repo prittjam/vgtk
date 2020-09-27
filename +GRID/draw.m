@@ -17,7 +17,7 @@ function draw(xgrid, varargin)
     colormap(hsv(N))
     cmap = colormap;
     
-    if size(xgrid,1) == 2
+    if rem(size(xgrid,1),3)~=0
         xgrid = RP2.homogenize(xgrid);
     end
     if size(xgrid,1) > 2

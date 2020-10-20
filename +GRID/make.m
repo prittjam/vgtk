@@ -1,4 +1,9 @@
 function x = make(w, h, gridsize, varargin)
+    if nargin == 0
+        w = 1000;
+        h = 1000;
+        gridsize = 25;
+    end
     cfg.centered = true;
     cfg = cmp_argparse(cfg, varargin{:});
     if cfg.centered

@@ -1,5 +1,12 @@
-function v = project_div(u, K, proj_params)
-    % proj_params -- [q cx cy]
+function v = project_div(v, K, proj_params)
+    % Args:
+    %   v -- 3xN
+    %   K -- 3x3
+    %   proj_params -- [q cx cy] in mm
+    %
+    % Returns:
+    %   v -- 3xN
+
     proj_params0 = zeros(1,3);
     proj_params0(1:size(proj_params,2)) = proj_params;
     
@@ -10,12 +17,6 @@ function v = project_div(u, K, proj_params)
     C = [1 0 proj_params0(2); 0 1 proj_params0(3); 0 0 1];
 
     if abs(q) > 0
-        m = size(u,1);
-        if (m == 2)
-            v = PT.homogenize(u);
-        else
-            v = u;
-        end
         if ~isempty(K)
             v = K \ PT.renormI(v);
         end
@@ -24,14 +25,10 @@ function v = project_div(u, K, proj_params)
 
         R = vecnorm(v(1:2,:),2,1);
         Z = v(3,:);
-        if R==0
-            r = 0;
-            v(1:2,:) = v(1:2,:);
-        else
-            r = max((Z+sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R),...
-                        (Z-sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R));
-            v(1:2,:) = v(1:2,:) .* r ./ R;
-        end
+
+        r = max((Z+sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R),...
+                (Z-sqrt(Z.^2-4.*q.*R.^2))./(2.*q.*R));
+        v(1:2,R~=0) = v(1:2,R~=0) .* r(R~=0) ./ R(R~=0);
         v(3,:) = 1;
 
         v = C * v;
@@ -39,10 +36,5 @@ function v = project_div(u, K, proj_params)
         if ~isempty(K)
             v = K * v;
         end
-        if (m == 2)
-            v = v(1:2,:);
-        end
-    else
-        v = u;
     end
 end

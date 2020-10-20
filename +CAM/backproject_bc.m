@@ -1,7 +1,12 @@
-function v = backproject_bc(u, K, proj_params)
-    % proj_params -- [k1 k2 p1 p2]
+function v = backproject_bc(v, K, proj_params)
+    % Args:
+    %   v -- 3xN
+    %   K -- 3x3
+    %   proj_params -- [k1 k2 p1 p2] in mm
+    %
+    % Returns:
+    %   v -- 3xN
 
-    m = size(u, 1);
     if isempty(K)
         K = eye(3);
     end
@@ -10,8 +15,6 @@ function v = backproject_bc(u, K, proj_params)
                     'RadialDistortion', proj_params(1:2),...
                     'TangentialDistortion', proj_params(3:4));
     
-    v = undistortPoints(u(1:2,end:-1:1)', cameraParams)';
-    if (m == 3)
-        v = [v; ones(1,size(v,2))];
-    end
+    v = undistortPoints(v(1:2,end:-1:1)', cameraParams)';
+    v = [v; ones(1,size(v,2))];
 end

@@ -1,7 +1,13 @@
-function v = backproject_sc(u, K, proj_params)
-    % proj_params -- [a0 a2 a3 a4 cx cy]
-    
-    proj_params0 = [1 zeros(1,5)];
+function v = backproject_sc(v, K, proj_params)
+    % Args:
+    %   v -- 3xN
+    %   K -- 3x3
+    %   proj_params -- [a0 a2 a3 a4 cx cy] in mm
+    %
+    % Returns:
+    %   v -- 3xN
+
+    proj_params0 = zeros(1,6);
     proj_params0(1:size(proj_params,2)) = proj_params;
     
     % Radial distortion
@@ -11,12 +17,6 @@ function v = backproject_sc(u, K, proj_params)
     C = [1 0 proj_params0(5); 0 1 proj_params0(6); 0 0 1];
 
     if any(abs(a)) > 0
-        m = size(u,1);
-        if (m == 2)
-            v = PT.homogenize(u);
-        else
-            v = u;
-        end
         if ~isempty(K)
             v = K \ PT.renormI(v);
         end
@@ -42,10 +42,5 @@ function v = backproject_sc(u, K, proj_params)
             v(3,:) = 1;
             v = K * v;
         end
-        if (m == 2)
-            v = v(1:2,:);
-        end
-    else
-        v = u;
     end
 end

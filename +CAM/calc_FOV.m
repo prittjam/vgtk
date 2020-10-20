@@ -6,16 +6,20 @@ function [HFOV, VFOV, DFOV] = calc_FOV(nx, ny, K,...
     cfg = cmp_argparse(cfg, varargin{:});
     if cfg.fisheye
         assert(~isempty(cfg.img));
-        c_pts = imcontour(im2bw(imgaussfilt(cfg.img,1),0.085),1);
+        % c_pts = imcontour(im2bw(imgaussfilt(cfg.img,1),0.085),1);
         close all
-        c_pts = c_pts(:,c_pts(1,:)>0 & c_pts(2,:)>0);
-        c_pts = c_pts(:,c_pts(1,:)<=nx & c_pts(2,:)<=ny);
-        % TODO: add filtering
-        c = CIRCLE.fit({c_pts});
-        rect = [max(c(1:2,:)-c(3,:),0) min(c(1:2,:)+c(3,:), [nx; ny])]; %[x1 x2; y1 y2]
-        K(1:2,3) = K(1:2,3) - rect(:,1);
-        nx = rect(1,2) - rect(1,1);
-        ny = rect(2,2) - rect(2,1);
+        % c_pts = c_pts(:,c_pts(1,:)>0 & c_pts(2,:)>0);
+        % c_pts = c_pts(:,c_pts(1,:)<=nx & c_pts(2,:)<=ny);
+        % c = CIRCLE.fit({c_pts});
+        % rect = [max(c(1:2,:)-c(3,:),0) min(c(1:2,:)+c(3,:), [nx; ny])]; %[x1 x2; y1 y2]
+        % imshow(cfg.img)
+        % CIRCLE.draw(c)
+        imshow(cfg.img)
+        rect = ginput(2)';
+        x0 = min(rect(1,:));
+        x1 = max(rect(1,:));
+        K(1,3) = K(1,3) - x0;
+        nx = x1 - x0;
     end
     % HFOV
     x = [1 K(2,3) 1; nx K(2,3) 1]';
@@ -50,6 +54,11 @@ function [HFOV, VFOV, DFOV] = calc_FOV(nx, ny, K,...
         HFOV = HFOV * 180 / pi;
         VFOV = VFOV * 180 / pi;
         DFOV = DFOV * 180 / pi;
+    end
+
+    if cfg.fisheye
+        VFOV = HFOV;
+        DFOV = HFOV;
     end
 end
 

@@ -1,13 +1,13 @@
-function v = backproject_kb(u, K, proj_params)
-    % proj_params -- [k1 k2 k3 k4]
+function v = backproject_kb(v, K, proj_params)
+    % Args:
+    %   v -- 3xN
+    %   K -- 3x3
+    %   proj_params -- [k1 k2 k3 k4] in mm
+    %
+    % Returns:
+    %   v -- 3xN
     
     if any(abs(proj_params)) > 0
-        m = size(u,1);
-        if (m == 2)
-            v = PT.homogenize(u);
-        else
-            v = u;
-        end
         if ~isempty(K)
             v = K \ PT.renormI(v);
         end
@@ -43,10 +43,5 @@ function v = backproject_kb(u, K, proj_params)
             v(:,ind) = K * v(:,ind);
             v(:,~ind) = NaN;
         end
-        if (m == 2)
-            v = v(1:2,:);
-        end
-    else
-        v = u;
     end
 end

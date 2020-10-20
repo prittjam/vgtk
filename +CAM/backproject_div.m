@@ -1,5 +1,11 @@
-function v = backproject_div(u, K, proj_params)
-    % proj_params -- [q cx cy]
+function v = backproject_div(v, K, proj_params)
+    % Args:
+    %   v -- 3xN
+    %   K -- 3x3
+    %   proj_params -- [q cx cy] in mm
+    %
+    % Returns:
+    %   v -- 3xN
     
     proj_params0 = zeros(1,3);
     proj_params0(1:size(proj_params,2)) = proj_params;
@@ -11,12 +17,6 @@ function v = backproject_div(u, K, proj_params)
     C = [1 0 proj_params0(2); 0 1 proj_params0(3); 0 0 1];
 
     if abs(q) > 0
-        m = size(u,1);
-        if (m == 2)
-            v = PT.homogenize(u);
-        else
-            v = u;
-        end
         if ~isempty(K)
             v = K \ PT.renormI(v);
         end
@@ -32,10 +32,5 @@ function v = backproject_div(u, K, proj_params)
             v(3,:) = 1;
             v = K * v;
         end
-        if (m == 2)
-            v = v(1:2,:);
-        end
-    else
-        v = u;
     end
 end

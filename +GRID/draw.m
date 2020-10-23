@@ -35,7 +35,11 @@ function draw(xgrid, varargin)
                     text(xgrid(1,k)+ts(1), xgrid(2,k)+ts(2), cfg.text{k}, "Color", cmap(k,:));
                 end
             else
-                plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color",cfg.color,leftover{:});
+                if size(cfg.color,1)==N
+                    plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color",cfg.color(k,:),leftover{:});
+                else
+                    plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color",cfg.color,leftover{:});
+                end
                 if ~isempty(cfg.text)
                     text(xgrid(1,k)+ts(1), xgrid(2,k)+ts(2), cfg.text{k}, "Color", cfg.color);
                 end

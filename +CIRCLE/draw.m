@@ -6,7 +6,7 @@ function draw(c, varargin)
     num_pts = 500;
 
     t = linspace(0, 1, num_pts);
-    color_flag = isvector(cfg.color) & isnumeric(cfg.color) & (~all(cfg.color<=1 & cfg.color>=0) || (numel(cfg.color)==size(c,2)));
+    color_flag = all(isvector(cfg.color) & isnumeric(cfg.color) & all(mod(cfg.color,1)==0) & ~all(cfg.color<=1 & cfg.color>=0));
     if color_flag
         cfg.color(isnan(cfg.color)) = max(cfg.color)+1;
         N = max(cfg.color);
@@ -28,6 +28,8 @@ function draw(c, varargin)
             plot(pts(1,:), pts(2,:), "Color", cmap(cfg.color(k),:), leftover{:});
         elseif isempty(cfg.color)
             plot(pts(1,:), pts(2,:), "Color", cmap(k,:), leftover{:});
+        elseif size(cfg.color,1)==N
+            plot(pts(1,:), pts(2,:), "Color",cfg.color(k,:),leftover{:});
         else
             plot(pts(1,:), pts(2,:), varargin{:});
         end

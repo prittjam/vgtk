@@ -3,7 +3,7 @@ function draw(arcs, varargin)
 
     [cfg, leftover] = cmp_argparse(struct('color',[],'linewidth',2),varargin{:});
 
-    color_flag = isvector(cfg.color) & isnumeric(cfg.color) & (~all(cfg.color<=1 & cfg.color>=0) || (numel(cfg.color)==numel(arcs)));
+    color_flag = all(isvector(cfg.color) & isnumeric(cfg.color) & all(mod(cfg.color,1)==0) & ~all(cfg.color<=1 & cfg.color>=0));
     if color_flag
         cfg.color(isnan(cfg.color)) = max(cfg.color)+1;
         N = max(cfg.color);
@@ -20,10 +20,10 @@ function draw(arcs, varargin)
             GRID.draw(pts(:,round((size(pts,2)+1)/2)), 'color', cmap(cfg.color(k),:),'linewidth',cfg.linewidth, leftover{:});
         elseif isempty(cfg.color)
             plot(pts(1,:), pts(2,:), "Color", cmap(k,:), 'linewidth',cfg.linewidth,leftover{:});
-            % GRID.draw(pts(:,round((size(pts,2)+1)/2)), 'color', cmap(k,:), leftover{:});
+        elseif size(cfg.color,1)==N
+            plot(pts(1,:), pts(2,:),"Color",cfg.color(k,:),'linewidth',cfg.linewidth,leftover{:});
         else
             plot(pts(1,:), pts(2,:),'linewidth',cfg.linewidth,varargin{:});
-            % GRID.draw(pts(:,round((size(pts,2)+1)/2)), varargin{:});
         end
     end
     hold off;

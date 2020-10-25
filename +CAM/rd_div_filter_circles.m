@@ -1,17 +1,17 @@
-function inliers = rd_div_filter_circles(c, img, outlierT)
-    if nargin<3
+function valid = rd_div_filter_circles(c, nx, ny, outlierT, dc)
+    if nargin<4
         outlierT = 1e9;
     end
 
-    flag_radius = c(3,:) > max(img.width, img.height) / 2;
-    flag_distcenter = sqrt((img.width / 2 - c(1,:)).^2 +...
-                        (img.height / 2 - c(2,:)).^2) < c(3,:);
-    flag_rddiv = c(3,:).^2 -...
-        ((img.width / 2 - c(1,:)).^2 -...
-        (img.height / 2 - c(2,:)).^2) > 1./12;
+    flag_radius = c(3,:) > 0.2 * min(nx, ny);
+    if nargin < 5 | (nargin == 5 & dc)
+        flag_dc = (nx/2+0.5 - c(1,:)).^2 +...
+                  (ny/2+0.5 - c(2,:)).^2 < 1.5 * c(3,:).^2;
+    else
+        flag_dc = 1;
+    end
 
-    is_xgood = abs(c(1,:)) < outlierT;
-    is_ygood = abs(c(2,:)) < outlierT;
+    flag_cc = all(abs(c(1:2,:)) < outlierT);
 
-    inliers = flag_radius & flag_distcenter & flag_rddiv & is_xgood & is_ygood;
+    valid = flag_radius & flag_dc & flag_cc;
 end

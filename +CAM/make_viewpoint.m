@@ -18,7 +18,7 @@ function [cam, x] = make_viewpoint(cam,varargin)
 
     if isempty(cfg.c)
         if isfield(cam, 'vfov')
-            fov = min(cam.hfov, cam.hfov);
+            fov = min(cam.hfov, cam.vfov);
         else
             fov = cam.hfov;
         end

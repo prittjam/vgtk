@@ -1,8 +1,8 @@
-function [simg1, simg2, simg3, simg] = make_scene_img2(img, meas, groups, res, model)
+function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, model)
     nx = size(img,2);
     ny = size(img,1);
 
-    if isfield(res.info,'circ')
+    if 0%isfield(res.info,'circ')
         figure('visible','off'); imshow(img);
         arcs = meas('arc');
         arcs = arcs(res.info.cs);
@@ -21,7 +21,7 @@ function [simg1, simg2, simg3, simg] = make_scene_img2(img, meas, groups, res, m
         simg1=[];
     end
 
-    if isfield(res,'rgn')
+    if 0%isfield(res,'rgn')
         rgns = meas('rgn');
         cspond = res.rgn.info.cspond;
         Gvpx = res.rgn.info.Gvp;
@@ -40,6 +40,16 @@ function [simg1, simg2, simg3, simg] = make_scene_img2(img, meas, groups, res, m
         fullscreen;
         simg2=getframe(gca).cdata;
         close all
+    else
+        simg2 = [];
+    end
+
+    if isfield(res,'rgn')
+        rgns = meas('rgn');
+        cspond = res.rgn.info.cspond;
+        Gvpx = res.rgn.info.Gvp;
+        Gvlx = res.rgn.info.Gvl;
+        cs = res.rgn.info.cs;
 
         figure('visible','off'); imshow(img);
         clr = [1 1 0; 1 0 1; 0 1 1];
@@ -61,7 +71,6 @@ function [simg1, simg2, simg3, simg] = make_scene_img2(img, meas, groups, res, m
         simg3=getframe(gca).cdata;
         close all
     else
-        simg2 = [];
         simg3 = [];
     end
 
@@ -75,8 +84,6 @@ function [simg1, simg2, simg3, simg] = make_scene_img2(img, meas, groups, res, m
         clr = [eye(3) [alpha; alpha; alpha]];
         CIRCLE.draw(res.info.circ,'color',clr(Gvpc,:),'linewidth',2)
         ARC.draw(arcs,'color',clr(Gvpc,:),'linewidth',2)
-        GRID.draw(RP2.project_div(model.K*model.R,model.K,model.proj_params),'color','k','size',30)
-        GRID.draw(RP2.project_div(model.K*model.R,model.K,model.proj_params))
 
         rgns = meas('rgn');
         cspond = res.rgn.info.cspond;
@@ -91,9 +98,9 @@ function [simg1, simg2, simg3, simg] = make_scene_img2(img, meas, groups, res, m
         xlim([1 nx])
         ylim([1 ny])
         fullscreen;
-        simg=getframe(gca).cdata;
+        simg4=getframe(gca).cdata;
         close all
     else
-        simg = [];
+        simg4 = [];
     end
 end

@@ -8,7 +8,7 @@ function simgs = make_scene_img(img, ld, l, ud, x, xu, cspond, Gvl, c, Gvp)
     vl_dist = (l' * xu(1:3,:));
     vl_side = [vl_dist < 0];
 
-    k2 = [1 2; 2 3; 1 3];
+    k2 = nchoosek(1:3,2);
     simgs = {};
     for k=1:3
         simgs01 = {};

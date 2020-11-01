@@ -29,7 +29,7 @@ function heatmaps = make_heatmaps(meas, model, res, render, nx, ny, varargin)
     y_dist = [y_dist{:}];
     y_side = [y_dist < 0];
 
-    k2 = [1 2; 2 3; 1 3];
+    k2 = nchoosek(1:3,2);
 
     for k=1:3
         for s=0:1

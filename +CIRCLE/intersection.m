@@ -1,4 +1,4 @@
-function [res1, res2] = intersection(c1, c2)
+function res = intersection(c1, c2)
     % c -- [cx; cy; R]
 
     x1 = c1(1,:);
@@ -19,8 +19,8 @@ function [res1, res2] = intersection(c1, c2)
     b1 = a - acos((d.^2 - 1 - dr.^2)./2./dr);
     b2 = a + acos((d.^2 - 1 - dr.^2)./2./dr);
 
-    res1 = [R2 .* cos(b1) + x2; R2 .* sin(b1) + y2];
-    res2 = [R2 .* cos(b2) + x2; R2 .* sin(b2) + y2];
+    res = [[R2 .* cos(b1) + x2; R2 .* sin(b1) + y2]...
+           [R2 .* cos(b2) + x2; R2 .* sin(b2) + y2]]
 
     % CIRCLE.draw(c1);
     % CIRCLE.draw(c2);

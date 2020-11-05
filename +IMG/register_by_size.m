@@ -15,10 +15,10 @@ function [T,S,border] = register_by_size(T0,border,sz,varargin)
 
     nx = sz(2);
     ny = sz(1);
-    s = [(nx-1)/xextent (ny-1)/yextent];
+    s = abs([(nx-1)/xextent (ny-1)/yextent]);
     
     if cfg.lockaspectratio
-        s = min(s);
+        s = max(s);
         S = [s 0 0; ...
              0 s 0; ...
              0 0 1];

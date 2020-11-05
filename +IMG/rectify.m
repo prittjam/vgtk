@@ -18,6 +18,7 @@ function [timg,trect,T,A] = rectify(img,H,varargin)
     cfg.ru_xform = maketform('affine',eye(3));
     cfg.fill = 255;
     cfg.scale_output = 1;
+    cfg.final_T = eye(3);
     
     [cfg,leftover] = cmp_argparse(cfg,varargin{:});
     
@@ -48,12 +49,14 @@ function [timg,trect,T,A] = rectify(img,H,varargin)
       otherwise
         error('No registration method specified'); 
     end
-
-
+    
     [T,A2] = IMG.register_by_size(T,cfg.border,cfg.size, ...
                                   'LockAspectRatio','true');
     A = A2*A;
-    
+    % T = maketform('composite',maketform('projective',cfg.final_T),T);
+    % A = cfg.final_T*A;
+    % keyboard
+
     outbounds = tformfwd(T,cfg.border);
 
     timg = imtransform(img,T,'bicubic', ...

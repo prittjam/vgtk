@@ -1,4 +1,4 @@
-function [rimgs, T_rect] = make_orthophotos(img, masks, model, varargin)
+function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, varargin)
     cfg.reiterate = false;
     cfg.plot = false;
     cfg.vl_min_dist = 0.2;
@@ -8,7 +8,7 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, varargin)
     cfg.size = [];
     cfg = cmp_argparse(cfg, varargin{:});
     if isempty(cfg.size)
-        cfg.size = 2*size(img);
+        cfg.size = size(img);
     end 
 
     nx = size(img,2);
@@ -23,10 +23,10 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, varargin)
 
     N = 3;
     if ~cfg.reiterate
-        [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg);
+        [rimgs, T_rect] = rectify(img, masks, model, base_path, sufx, vl_min_dist, border_x, border_vl_side, cfg);
     else
         while true
-            [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg);
+            [rimgs, T_rect] = rectify(img, masks, model, base_path, sufx, vl_min_dist, border_x, border_vl_side, cfg);
             ans = input('Retry(Y/y/N/n): ', 's');
             if strcmp(upper(ans),'N')
                 break
@@ -43,7 +43,7 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, varargin)
     end
 end
 
-function [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, border_vl_side, cfg)
+function [rimgs, T_rect] = rectify(img, masks, model, base_path, sufx, vl_min_dist, border_x, border_vl_side, cfg)
     N = 3;
 
     uimg = cfg.uimg;
@@ -67,6 +67,12 @@ function [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, bor
     T_rect = ones(3,3,3,2) * NaN;
     for k=1:N
         for s=0:1
+            rimgs{k}{s+1} = NaN;
+        end
+    end
+    for k=1:N
+        for s=0:1
+            display(num2str([k,s]))
             border = [intr{s+1}{k} border_x(:,border_vl_side(k,:)==s)];
             % border = IMG.input_border(simgs{k}{s+1}, 4,...
             %                             ['Click on 4 points for '... 
@@ -78,12 +84,18 @@ function [rimgs, T_rect] = rectify(img, masks, model, vl_min_dist, border_x, bor
                                     model.Hs(:,:,k),...
                                     model.cc, model.q, ...
                                     'size', cfg.size,...
-                                    'border', border(1:2,:)', ...
+                                    'border', 2*border(1:2,:)', ...
                                     'Registration', 'none');
                 T(1:2,3) = -xborder(1:2)';
                 T_rect(:,:,k,s+1) = T;
-            else
-                rimgs{k}{s+1} = NaN;
+                % n0x = size(rimgs{k}{s+1},2);
+                % n0y = size(rimgs{k}{s+1},1);
+                % nx = cfg.size(2);
+                % ny = cfg.size(1);
+                % x0 = (n0x - nx) /2;
+                % y0 = (n0y - ny) /2;
+                % rimgs{k}{s+1} = imcrop(rimgs{k}{s+1}, [x0 y0 nx ny]);
+                imwrite(rimgs{k}{s+1}, [base_path '_rect' num2str(k) '_' num2str(s) sufx '.jpg'])
             end
         end
     end

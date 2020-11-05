@@ -22,7 +22,7 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
     end
 
     if 0%isfield(res,'rgn')
-        rgns = meas('rgn');
+        x = meas('rgn');
         cspond = res.rgn.info.cspond;
         Gvpx = res.rgn.info.Gvp;
         Gvlx = res.rgn.info.Gvl;
@@ -31,7 +31,7 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
         figure('visible','off'); imshow(img);
         clr = eye(3);
         for k=1:3
-            GRID.draw([rgns((k-1)*3+1:k*3,cspond(1,cs));rgns((k-1)*3+1:k*3,cspond(2,cs))],'color',clr(Gvpx(cs),:),'size',8,'linewidth',2)
+            GRID.draw([x((k-1)*3+1:k*3,cspond(1,cs));x((k-1)*3+1:k*3,cspond(2,cs))],'color',clr(Gvpx(cs),:),'size',8,'linewidth',2)
         end 
         GRID.draw(RP2.project_div(model.K*model.R,model.K,model.proj_params),'color','k','size',50)
         GRID.draw(RP2.project_div(model.K*model.R,model.K,model.proj_params),'size',40)
@@ -45,7 +45,7 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
     end
 
     if isfield(res,'rgn')
-        rgns = meas('rgn');
+        x = meas('rgn');
         cspond = res.rgn.info.cspond;
         Gvpx = res.rgn.info.Gvp;
         Gvlx = res.rgn.info.Gvl;
@@ -54,11 +54,11 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
         figure('visible','off'); imshow(img);
         clr = [1 1 0; 1 0 1; 0 1 1];
         Gvlx_ = arrayfun(@(k) mode(Gvlx(find(sum(cspond==k)&cs))),...
-                                                    1:size(rgns,2));
+                                                    1:size(x,2));
         cs_ = ~isnan(Gvlx_);
-        GRID.draw(rgns(1:3,cs_),'color',clr(Gvlx_(cs_),:),'size',30);
-        GRID.draw(rgns(4:6,cs_),'color',clr(Gvlx_(cs_),:),'size',30);
-        GRID.draw(rgns(7:9,cs_),'color',clr(Gvlx_(cs_),:),'size',30);
+        GRID.draw(x(1:3,cs_),'color',clr(Gvlx_(cs_),:),'size',30);
+        GRID.draw(x(4:6,cs_),'color',clr(Gvlx_(cs_),:),'size',30);
+        GRID.draw(x(7:9,cs_),'color',clr(Gvlx_(cs_),:),'size',30);
         clr = [1 1 0; 1 0 1; 0 1 1];
         ld = LINE.project_div(model.l, model.K, model.proj_params);
         CIRCLE.draw(ld,'color','k','linewidth',4);
@@ -85,12 +85,12 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
         CIRCLE.draw(res.info.circ,'color',clr(Gvpc,:),'linewidth',2)
         ARC.draw(arcs,'color',clr(Gvpc,:),'linewidth',2)
 
-        rgns = meas('rgn');
+        x = meas('rgn');
         cspond = res.rgn.info.cspond;
         Gvpx = res.rgn.info.Gvp;
         cs = res.rgn.info.cs;
         for k=1:3
-            GRID.draw([rgns((k-1)*3+1:k*3,cspond(1,cs));rgns((k-1)*3+1:k*3,cspond(2,cs))],'color',clr(Gvpx(cs),:),'size',8,'linewidth',2)
+            GRID.draw([x((k-1)*3+1:k*3,cspond(1,cs));x((k-1)*3+1:k*3,cspond(2,cs))],'color',clr(Gvpx(cs),:),'size',8,'linewidth',2)
         end 
 
         GRID.draw(RP2.project_div(model.K*model.R,model.K,model.proj_params),'color','k','size',50)

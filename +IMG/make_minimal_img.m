@@ -13,6 +13,7 @@ function mimg = make_minimal_img(img, meas, model, res)
         CIRCLE.draw(circ(:,find(arc_ix2)),'color','m','LineWidth',2,'LineStyle','--')
     end
     if isKey(mss,'rgn')
+        x = meas('rgn');
         rgn_ix = mss('rgn');
         x_mss = x(:,[rgn_ix{:}]);
         xu_mss = RP2.backproject_div(x_mss, model.K, model.proj_params);

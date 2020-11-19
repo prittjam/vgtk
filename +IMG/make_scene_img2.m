@@ -2,7 +2,7 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
     nx = size(img,2);
     ny = size(img,1);
 
-    if 0%isfield(res.info,'circ')
+    if isfield(res.info,'circ')
         figure('visible','off'); imshow(img);
         arcs = meas('arc');
         arcs = arcs(res.info.cs);
@@ -21,7 +21,7 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
         simg1=[];
     end
 
-    if 0%isfield(res,'rgn')
+    if isfield(res,'rgn')
         x = meas('rgn');
         cspond = res.rgn.info.cspond;
         Gvpx = res.rgn.info.Gvp;
@@ -77,7 +77,6 @@ function [simg1, simg2, simg3, simg4] = make_scene_img2(img, meas, groups, res, 
     if isfield(res.info,'circ') & isfield(res,'rgn')
         alpha = 0.5;
         figure('visible','off'); imshow(img);
-        % fig; imshow(img);
         arcs = meas('arc');
         arcs = arcs(res.info.cs);
         Gvpc = res.info.Gvp;

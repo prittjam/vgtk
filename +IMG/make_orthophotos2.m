@@ -40,7 +40,7 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
     for k=1:N
         for s=0:1
             display(num2str([k,s]))
-            if ~cfg.reiterate || java.lang.System.getProperty( 'java.awt.headless' )
+            if ~cfg.reiterate || ~isempty(java.lang.System.getProperty('java.awt.headless'))
                 ld0{1} = LINE.project_div([model.l(1:2,:); model.l(3,:)-vl_min_dist],model.K, model.proj_params);
                 ld0{2} = LINE.project_div([model.l(1:2,:); model.l(3,:)+vl_min_dist],model.K, model.proj_params);
                 

@@ -40,7 +40,7 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
     for k=1:N
         for s=0:1
             display(num2str([k,s]))
-            if ~cfg.reiterate
+            if ~cfg.reiterate || java.lang.System.getProperty( 'java.awt.headless' )
                 ld0{1} = LINE.project_div([model.l(1:2,:); model.l(3,:)-vl_min_dist],model.K, model.proj_params);
                 ld0{2} = LINE.project_div([model.l(1:2,:); model.l(3,:)+vl_min_dist],model.K, model.proj_params);
                 
@@ -59,7 +59,7 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
                             'Registration', 'none');
                     T(1:2,3) = -xborder(1:2)';
                     T_rect(:,:,k,s+1) = T;
-                    imwrite(rimgs{k}{s+1}, [base_path '_rect' sufx '.jpg'])
+                    imwrite(rimgs{k}{s+1}, [base_path '_rect' num2str((k-1)*2+s+1) sufx '.jpg'])
                 end
             else
                 T0 = eye(3);

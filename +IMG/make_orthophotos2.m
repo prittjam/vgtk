@@ -55,7 +55,7 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
                             max(img,masks{k}{s+1}),...
                             model.Hs(:,:,k), model.cc, model.q, ...
                             'size', cfg.size,...
-                            'border', 2*border(1:2,:)', ...
+                            'border', border(1:2,:)', ...
                             'Registration', 'none');
                     T(1:2,3) = -xborder(1:2)';
                     T_rect(:,:,k,s+1) = T;
@@ -81,13 +81,13 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
                             'border', border(1:2,:)', ...
                             'Registration', 'none',...
                             'final_T',T0);
-                        n0x = size(rimgs{k}{s+1},2);
-                        n0y = size(rimgs{k}{s+1},1);
-                        nx = cfg.size(2);
-                        ny = cfg.size(1);
-                        x0 = (n0x-nx) /2;
-                        y0 = (n0y-ny) /2;
-                        rimgs{k}{s+1} = imcrop(rimgs{k}{s+1}, [x0 y0 nx ny]);
+                        % n0x = size(rimgs{k}{s+1},2);
+                        % n0y = size(rimgs{k}{s+1},1);
+                        % nx = cfg.size(2);
+                        % ny = cfg.size(1);
+                        % x0 = (n0x-nx) /2;
+                        % y0 = (n0y-ny) /2;
+                        % rimgs{k}{s+1} = imcrop(rimgs{k}{s+1}, [x0 y0 nx ny]);
                         close all;
                         imshow(rimgs{k}{s+1})
                         ans = input('Keep(Y/y/N/n): ', 's');

@@ -9,6 +9,7 @@ function draw(xgrid, varargin)
     marker_params = {'Marker','.','MarkerSize',cfg.size};
 
     color_flag = isvector(cfg.color) & isnumeric(cfg.color) & all(mod(cfg.color,1)==0) & ~all(cfg.color<=1 & cfg.color>=0);
+    color_flag = all(color_flag);
     if color_flag
         N = max(cfg.color);
     else
@@ -16,7 +17,6 @@ function draw(xgrid, varargin)
     end
     colormap(hsv(N))
     cmap = colormap;
-    
     if rem(size(xgrid,1),3)~=0
         xgrid = RP2.homogenize(xgrid);
     end
@@ -35,8 +35,8 @@ function draw(xgrid, varargin)
                     text(xgrid(1,k)+ts(1), xgrid(2,k)+ts(2), cfg.text{k}, "Color", cmap(k,:));
                 end
             else
-                if size(cfg.color,1)==N
-                    plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color",cfg.color(k,:),leftover{:});
+                if size(cfg.color,2)==N
+                    plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color",cfg.color(:,k),leftover{:});
                 else
                     plot(xgrid(1:3:end,k), xgrid(2:3:end,k), marker_params{:},"Color",cfg.color,leftover{:});
                 end

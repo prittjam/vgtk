@@ -13,7 +13,6 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
     nx = size(img,2);
     ny = size(img,1);
     
-    vl_min_dist = cfg.vl_min_dist * max(ny,nx);
 
     border_x = [1 nx nx 1; ny ny 1 1; 1 1 1 1];
     border_x_ud = CAM.backproject_div(border_x, model.K, model.proj_params);
@@ -34,12 +33,13 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
     T_rect = ones(3,3,3,2) * NaN;
     for k=1:N
         for s=0:1
-            rimgs{k}{s+1} = NaN;
+            rimgs{k}{s+1} = ones(size(img))*255;
         end
     end
     for k=1:N
         for s=0:1
             display(num2str([k,s]))
+            vl_min_dist = cfg.vl_min_dist * max(ny,nx);
             if ~cfg.reiterate || ~isempty(java.lang.System.getProperty('java.awt.headless'))
                 ld0{1} = LINE.project_div([model.l(1:2,:); model.l(3,:)-vl_min_dist],model.K, model.proj_params);
                 ld0{2} = LINE.project_div([model.l(1:2,:); model.l(3,:)+vl_min_dist],model.K, model.proj_params);
@@ -63,16 +63,24 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
                 end
             else
                 T0 = eye(3);
+                askRotation = 1;
+                rotAngle = 0;
                 while true
-                    ld0{1} = LINE.project_div([model.l(1:2,:); model.l(3,:)-vl_min_dist],model.K, model.proj_params);
-                    ld0{2} = LINE.project_div([model.l(1:2,:); model.l(3,:)+vl_min_dist],model.K, model.proj_params);
-                    
-                    intr = {};
-                    intr{1} = CIRCLE.intersect_rect(ld0{1}, border_x);
-                    intr{1} = cellfun(@(x) x(:,all(x(1:2,:)>=[1;1]) & all(x(1:2,:)<=[nx;ny])), intr{1}, 'UniformOutput', false);
-                    intr{2} = CIRCLE.intersect_rect(ld0{2}, border_x);
-                    intr{2} = cellfun(@(x) x(:,all(x(1:2,:)>=[1;1]) & all(x(1:2,:)<=[nx;ny])), intr{2}, 'UniformOutput', false);
-                    border=[intr{s+1}{k} border_x(:,border_vl_side(k,:)==s)];
+                    if s == 0
+                        l0 = [model.l(1:2,:); model.l(3,:)-vl_min_dist];
+                        ld0 = LINE.project_div(l0, model.K, model.proj_params);
+                        intr = CIRCLE.intersect_rect(ld0, border_x);
+                        intr = cellfun(@(x) x(:,all(x(1:2,:)>=[1;1]) & all(x(1:2,:)<=[nx;ny])), intr, 'UniformOutput', false);
+                    else
+                        l0 = [model.l(1:2,:); model.l(3,:)+vl_min_dist];
+                        ld0 = LINE.project_div(l0,model.K, model.proj_params);
+                        intr = CIRCLE.intersect_rect(ld0, border_x);
+                        intr = cellfun(@(x) x(:,all(x(1:2,:)>=[1;1]) & all(x(1:2,:)<=[nx;ny])), intr, 'UniformOutput', false);
+                    end
+                    border_vl_dist = (l0' * border_x_ud);
+                    border_vl_side = [border_vl_dist < 0];
+
+                    border=[intr{k} border_x(:,border_vl_side(k,:)==s)];
                     if size(border,2) > 1
                         [rimgs{k}{s+1},xborder,~,T]=IMG.ru_div_rectify(...
                             max(img,masks{k}{s+1}),...
@@ -81,6 +89,9 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
                             'border', border(1:2,:)', ...
                             'Registration', 'none',...
                             'final_T',T0);
+                        if abs(rotAngle)>1e-9
+                            rimgs{k}{s+1} = imrotate(rimgs{k}{s+1},rotAngle);
+                        end
                         % n0x = size(rimgs{k}{s+1},2);
                         % n0y = size(rimgs{k}{s+1},1);
                         % nx = cfg.size(2);
@@ -90,26 +101,36 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
                         % rimgs{k}{s+1} = imcrop(rimgs{k}{s+1}, [x0 y0 nx ny]);
                         close all;
                         imshow(rimgs{k}{s+1})
-                        ans = input('Keep(Y/y/N/n): ', 's');
+                        ans = input('Need fix?(Y/y/N/n): ', 's');
                     else
                        break 
                     end
                     if strcmp(upper(ans),'N')
                         break
                     else
-                        ans = input('Resize(Y/y/N/n): ', 's');
-                        if strcmp(upper(ans),'N')
-                            T(1:2,3) = -xborder(1:2)';
-                            T_rect(:,:,k,s+1) = T;
-                            imwrite(rimgs{k}{s+1}, [base_path '_rect' sufx '.jpg'])
-                            return
-                        else
-                            display(['Current vl_min_dist is: ' num2str(vl_min_dist)])
-                            ans = input('Input new one or skip (ENTER): ');
-                            if ~isempty(ans)
-                                vl_min_dist = ans;
+                        if askRotation
+                            ans = input('Rotate(Y/y/N/n): ', 's');
+                            if ~strcmp(upper(ans),'N')
+                                rotAngle = rotAngle + 90;
                             else
-                                break
+                                askRotation = 0;
+                            end
+                        end
+                        if ~askRotation
+                            ans = input('Resize(Y/y/N/n): ', 's');
+                            if strcmp(upper(ans),'N')
+                                T(1:2,3) = -xborder(1:2)';
+                                T_rect(:,:,k,s+1) = T;
+                                imwrite(rimgs{k}{s+1}, [base_path '_rect' sufx '.jpg'])
+                                return
+                            else
+                                display(['Current vl_min_dist is: ' num2str(vl_min_dist)])
+                                ans = input('Input new one or skip (ENTER): ');
+                                if ~isempty(ans)
+                                    vl_min_dist = ans;
+                                else
+                                    break
+                                end
                             end
                         end
                     end
@@ -117,4 +138,6 @@ function [rimgs, T_rect] = make_orthophotos(img, masks, model, base_path, sufx, 
             end
         end
     end
+
+    close all;
 end

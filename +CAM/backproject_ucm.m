@@ -1,4 +1,4 @@
-function v = backproject_cmei(v, K, proj_params)
+function v = backproject_ucm(v, K, proj_params)
     % Args:
     %   v -- 3xN
     %   K -- 3x3

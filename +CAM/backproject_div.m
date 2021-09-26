@@ -2,28 +2,38 @@ function v = backproject_div(v, K, proj_params)
     % Args:
     %   v -- 3xN
     %   K -- 3x3
-    %   proj_params -- [q cx cy] in mm
+    %   proj_params -- [a2 a3 a4 cx cy] in mm
     %
     % Returns:
     %   v -- 3xN
-    
-    proj_params0 = zeros(1,3);
+
+    proj_params0 = zeros(1,5);
     proj_params0(1:size(proj_params,2)) = proj_params;
     
     % Radial distortion
-    q = proj_params0(1);
+    a = [1 proj_params0(1:3)];
 
     % Shift by distortion center
-    C = [1 0 proj_params0(2); 0 1 proj_params0(3); 0 0 1];
+    C = [1 0 proj_params0(4); 0 1 proj_params0(5); 0 0 1];
 
-    if abs(q) > 0
+    if any(abs(a)) > 0
         if ~isempty(K)
             v = K \ PT.renormI(v);
         end
 
         v = C \ v;
 
-        v(3,:) = 1+q*(v(1,:).^2+v(2,:).^2);
+        if (a(1) == 1 & a(3) == 0 & a(4) == 0)
+            v = CAM.backproject_div(v, [], a(2));
+        else
+
+            a0 = a(1);
+            a = a(2:end);
+            r = vecnorm(v(1:2,:),2,1);
+            pows = (2:numel(a)+1) .* (a~=0);
+            v(3,:) = (a0 + (r'.^(pows)) * a')';
+        
+        end
         
         v = C * v;
 
